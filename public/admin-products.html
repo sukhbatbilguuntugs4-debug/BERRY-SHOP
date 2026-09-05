@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BERRY — Бүтээгдэхүүн удирдах</title>
+<style>
+  *{ box-sizing:border-box; }
+  body{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#F7F3FC; margin:0; padding: 30px 5vw 80px; color:#241A35; }
+  h1{ font-size: 24px; margin-bottom: 6px; }
+  h2{ font-size: 17px; margin: 0 0 14px; }
+  a.nav-link{ color:#6D3FD6; text-decoration:none; font-weight:700; font-size:13px; }
+  .key-box{ display:flex; gap:10px; margin-bottom: 24px; flex-wrap: wrap; align-items:center; }
+  input, select{ padding:10px 14px; border-radius:8px; border:1px solid #E1D5F3; font-size:14px; font-family:inherit; }
+  input[type=text], input[type=number], input[type=password], select{ width:100%; }
+  button{ padding:10px 18px; border-radius:8px; border:none; background:#6D3FD6; color:#fff; font-weight:700; cursor:pointer; font-size:14px; }
+  button:hover{ background:#8B5CF6; }
+  button.secondary{ background:#fff; color:#6D3FD6; border:1px solid #6D3FD6; }
+  button.danger{ background:#fff; color:#C23B6B; border:1px solid #C23B6B; }
+  .card{ background:#fff; border-radius:14px; padding:22px; margin-bottom:22px; border:1px solid #E1D5F3; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:12px; font-weight:700; color:#7C7189; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.4px; }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+  .row3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px; }
+  .variant-block{ border:1px dashed #E1D5F3; border-radius:10px; padding:14px; margin-bottom:12px; position:relative; }
+  .variant-block .remove-variant{ position:absolute; top:8px; right:8px; background:none; border:none; color:#C23B6B; font-size:12px; font-weight:700; padding:2px 8px; }
+  .thumb{ width:70px; height:70px; border-radius:8px; background:#F5F1FC; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-top:8px; }
+  .thumb img{ max-width:100%; max-height:100%; object-fit:contain; }
+  .product-list{ display:flex; flex-direction:column; gap:12px; }
+  .product-row{ display:flex; gap:14px; align-items:center; background:#fff; border:1px solid #E1D5F3; border-radius:12px; padding:12px 16px; }
+  .product-row img{ width:50px; height:50px; object-fit:contain; background:#F5F1FC; border-radius:8px; }
+  .product-row .info{ flex:1; }
+  .product-row .info .n{ font-weight:700; font-size:14px; }
+  .product-row .info .m{ font-size:12px; color:#7C7189; }
+  .empty{ color:#7C7189; padding: 20px 0; text-align:center; }
+  .msg{ font-size:13px; margin-top:10px; }
+  .msg.ok{ color:#2E7D32; }
+  .msg.err{ color:#C23B6B; }
+</style>
+</head>
+<body>
+
+<h1>BERRY — Удирдлагын самбар</h1>
+<p style="margin-top:0;"><a class="nav-link" href="/admin.html">← Захиалгууд руу очих</a></p>
+
+<div class="key-box">
+  <input type="password" id="adminKey" placeholder="Админ түлхүүр" style="width:220px;">
+  <button id="loadBtn">Нэвтрэх</button>
+  <span class="msg" id="keyMsg"></span>
+</div>
+
+<div id="mainArea" style="display:none;">
+
+  <div class="card">
+    <h2>Дэлгүүрийн тохиргоо</h2>
+    <div class="row2">
+      <div class="field"><label>Дэлгүүрийн нэр</label><input type="text" id="setStoreName"></div>
+      <div class="field"><label>Банкны нэр</label><input type="text" id="setBankName"></div>
+      <div class="field"><label>Дансны дугаар</label><input type="text" id="setBankAccount"></div>
+      <div class="field"><label>Хүлээн авагчийн нэр</label><input type="text" id="setBankHolder"></div>
+    </div>
+    <button id="saveSettingsBtn">Тохиргоог хадгалах</button>
+    <span class="msg" id="settingsMsg"></span>
+  </div>
+
+  <div class="card">
+    <h2>Одоо байгаа бараанууд</h2>
+    <div class="product-list" id="productList"><div class="empty">Ачаалж байна...</div></div>
+  </div>
+
+  <div class="card">
+    <h2 id="formTitle">Шинэ бараа нэмэх</h2>
+    <input type="hidden" id="editingId">
+    <div class="row2">
+      <div class="field"><label>Барааны нэр</label><input type="text" id="pName" placeholder="жишээ: BERRY цамц"></div>
+      <div class="field"><label>Ангилал</label><input type="text" id="pCat" placeholder="жишээ: Футболка"></div>
+    </div>
+    <div class="row3">
+      <div class="field"><label>Үнэ (₮)</label><input type="number" id="pPrice" placeholder="50000"></div>
+      <div class="field"><label>Хуучин үнэ (хямдралтай бол, ₮)</label><input type="number" id="pOldPrice" placeholder=""></div>
+      <div class="field">
+        <label>Badge</label>
+        <select id="pBadge">
+          <option value="">Байхгүй</option>
+          <option value="new">Шинэ</option>
+          <option value="sale">Хямдрал</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Үнэлгээ (0-5)</label><input type="number" step="0.1" id="pRating" placeholder="4.8"></div>
+      <div class="field"><label>Сэтгэгдлийн тоо</label><input type="number" id="pReviews" placeholder="132"></div>
+    </div>
+    <div class="field">
+      <label>Размерууд (таслалаар тусгаарлана)</label>
+      <input type="text" id="pSizes" placeholder="S, M, L, XL">
+    </div>
+
+    <div class="field">
+      <label>Өнгө / зурган хувилбарууд</label>
+      <div id="variantsWrap"></div>
+      <button type="button" class="secondary" id="addVariantBtn">+ Өнгө нэмэх</button>
+    </div>
+
+    <div style="margin-top:16px; display:flex; gap:10px;">
+      <button id="saveProductBtn">Бараа хадгалах</button>
+      <button type="button" class="secondary" id="cancelEditBtn" style="display:none;">Цуцлах</button>
+    </div>
+    <span class="msg" id="productMsg"></span>
+  </div>
+
+</div>
+
+<script>
+let ADMIN_KEY = "";
+let products = [];
+
+function variantRow(v){
+  v = v || { color: "", hex: "#6D3FD6", img: "" };
+  const wrap = document.createElement('div');
+  wrap.className = 'variant-block';
+  wrap.innerHTML = `
+    <button type="button" class="remove-variant">Устгах</button>
+    <div class="row3">
+      <div class="field"><label>Өнгөний нэр</label><input type="text" class="v-color" value="${v.color}" placeholder="Хар"></div>
+      <div class="field"><label>Өнгөний код</label><input type="text" class="v-hex" value="${v.hex}" placeholder="#1A1A1A"></div>
+      <div class="field"><label>Зураг сонгох</label><input type="file" class="v-file" accept="image/*"></div>
+    </div>
+    <input type="hidden" class="v-img" value="${v.img}">
+    <div class="thumb">${v.img ? `<img src="/${v.img}">` : ''}</div>
+  `;
+  wrap.querySelector('.remove-variant').addEventListener('click', ()=> wrap.remove());
+  wrap.querySelector('.v-file').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async ()=>{
+      const dataUrl = reader.result;
+      const res = await fetch('/api/upload?key=' + encodeURIComponent(ADMIN_KEY), {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ filename: file.name, dataUrl })
+      });
+      const data = await res.json();
+      if(data.ok){
+        wrap.querySelector('.v-img').value = data.path;
+        wrap.querySelector('.thumb').innerHTML = `<img src="/${data.path}">`;
+      } else {
+        alert('Зураг upload хийхэд алдаа гарлаа: ' + (data.error || ''));
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  return wrap;
+}
+
+document.getElementById('addVariantBtn').addEventListener('click', ()=>{
+  document.getElementById('variantsWrap').appendChild(variantRow());
+});
+
+function resetForm(){
+  document.getElementById('editingId').value = "";
+  document.getElementById('pName').value = "";
+  document.getElementById('pCat').value = "";
+  document.getElementById('pPrice').value = "";
+  document.getElementById('pOldPrice').value = "";
+  document.getElementById('pBadge').value = "";
+  document.getElementById('pRating').value = "";
+  document.getElementById('pReviews').value = "";
+  document.getElementById('pSizes').value = "";
+  document.getElementById('variantsWrap').innerHTML = "";
+  document.getElementById('variantsWrap').appendChild(variantRow());
+  document.getElementById('formTitle').textContent = "Шинэ бараа нэмэх";
+  document.getElementById('cancelEditBtn').style.display = "none";
+}
+
+function fillFormForEdit(p){
+  document.getElementById('editingId').value = p.id;
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pCat').value = p.cat;
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pOldPrice').value = p.oldPrice || "";
+  document.getElementById('pBadge').value = p.badge || "";
+  document.getElementById('pRating').value = p.rating || "";
+  document.getElementById('pReviews').value = p.reviews || "";
+  document.getElementById('pSizes').value = (p.sizes || []).join(", ");
+  document.getElementById('variantsWrap').innerHTML = "";
+  (p.variants || []).forEach(v => document.getElementById('variantsWrap').appendChild(variantRow(v)));
+  document.getElementById('formTitle').textContent = "Бараа засах: " + p.name;
+  document.getElementById('cancelEditBtn').style.display = "inline-block";
+  window.scrollTo({ top: document.getElementById('formTitle').offsetTop - 20, behavior: 'smooth' });
+}
+
+document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
+
+function renderProductList(){
+  const wrap = document.getElementById('productList');
+  if(products.length === 0){
+    wrap.innerHTML = '<div class="empty">Одоогоор бараа алга байна.</div>';
+    return;
+  }
+  wrap.innerHTML = products.map(p => `
+    <div class="product-row">
+      <img src="/${(p.variants[0] || {}).img || ''}">
+      <div class="info">
+        <div class="n">${p.name}</div>
+        <div class="m">${p.cat} · ${Number(p.price).toLocaleString('mn-MN')}₮${p.oldPrice ? ' (хуучин: ' + Number(p.oldPrice).toLocaleString('mn-MN') + '₮)' : ''}</div>
+      </div>
+      <button class="secondary" data-action="edit" data-id="${p.id}">Засах</button>
+      <button class="danger" data-action="delete" data-id="${p.id}">Устгах</button>
+    </div>
+  `).join('');
+
+  wrap.querySelectorAll('[data-action="edit"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const p = products.find(p => String(p.id) === btn.dataset.id);
+      if(p) fillFormForEdit(p);
+    });
+  });
+  wrap.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('Энэ бараааг устгахдаа итгэлтэй байна уу?')) return;
+      const res = await fetch('/api/products/' + btn.dataset.id + '?key=' + encodeURIComponent(ADMIN_KEY), { method: 'DELETE' });
+      const data = await res.json();
+      if(data.ok){
+        await loadProducts();
+      } else {
+        alert('Устгахад алдаа гарлаа: ' + (data.error || ''));
+      }
+    });
+  });
+}
+
+async function loadProducts(){
+  const res = await fetch('/api/products');
+  const data = await res.json();
+  if(data.ok) products = data.products;
+  renderProductList();
+}
+
+document.getElementById('saveProductBtn').addEventListener('click', async ()=>{
+  const msg = document.getElementById('productMsg');
+  const variants = Array.from(document.querySelectorAll('.variant-block')).map(el => ({
+    color: el.querySelector('.v-color').value.trim(),
+    hex: el.querySelector('.v-hex').value.trim() || '#6D3FD6',
+    img: el.querySelector('.v-img').value.trim()
+  })).filter(v => v.color && v.img);
+
+  const name = document.getElementById('pName').value.trim();
+  const cat = document.getElementById('pCat').value.trim();
+  const price = Number(document.getElementById('pPrice').value);
+
+  if(!name || !cat || !price || variants.length === 0){
+    msg.textContent = "Нэр, ангилал, үнэ, дор хаяж нэг өнгө+зураг заавал хэрэгтэй.";
+    msg.className = "msg err";
+    return;
+  }
+
+  const product = {
+    id: document.getElementById('editingId').value ? Number(document.getElementById('editingId').value) : undefined,
+    name, cat, price,
+    oldPrice: document.getElementById('pOldPrice').value ? Number(document.getElementById('pOldPrice').value) : null,
+    badge: document.getElementById('pBadge').value || null,
+    rating: Number(document.getElementById('pRating').value) || 5,
+    reviews: Number(document.getElementById('pReviews').value) || 0,
+    sizes: document.getElementById('pSizes').value.split(',').map(s => s.trim()).filter(Boolean),
+    variants
+  };
+
+  const res = await fetch('/api/products?key=' + encodeURIComponent(ADMIN_KEY), {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ product })
+  });
+  const data = await res.json();
+  if(data.ok){
+    msg.textContent = "Амжилттай хадгалагдлаа ✓";
+    msg.className = "msg ok";
+    resetForm();
+    await loadProducts();
+  } else {
+    msg.textContent = "Алдаа: " + (data.error || '');
+    msg.className = "msg err";
+  }
+});
+
+document.getElementById('saveSettingsBtn').addEventListener('click', async ()=>{
+  const msg = document.getElementById('settingsMsg');
+  const settings = {
+    storeName: document.getElementById('setStoreName').value.trim(),
+    bankName: document.getElementById('setBankName').value.trim(),
+    bankAccount: document.getElementById('setBankAccount').value.trim(),
+    bankHolder: document.getElementById('setBankHolder').value.trim()
+  };
+  const res = await fetch('/api/settings?key=' + encodeURIComponent(ADMIN_KEY), {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ settings })
+  });
+  const data = await res.json();
+  if(data.ok){
+    msg.textContent = "Хадгалагдлаа ✓";
+    msg.className = "msg ok";
+  } else {
+    msg.textContent = "Алдаа: " + (data.error || '');
+    msg.className = "msg err";
+  }
+});
+
+async function loadSettings(){
+  const res = await fetch('/api/settings');
+  const data = await res.json();
+  if(data.ok && data.settings){
+    document.getElementById('setStoreName').value = data.settings.storeName || "";
+    document.getElementById('setBankName').value = data.settings.bankName || "";
+    document.getElementById('setBankAccount').value = data.settings.bankAccount || "";
+    document.getElementById('setBankHolder').value = data.settings.bankHolder || "";
+  }
+}
+
+document.getElementById('loadBtn').addEventListener('click', async ()=>{
+  ADMIN_KEY = document.getElementById('adminKey').value.trim();
+  const keyMsg = document.getElementById('keyMsg');
+  const res = await fetch('/api/products'); // нээлттэй endpoint - зөвхөн жагсаалтыг шалгах
+  // Түлхүүрийг шалгахын тулд жинхэнэ хамгаалалттай endpoint рүү дуудна
+  const testRes = await fetch('/api/orders?key=' + encodeURIComponent(ADMIN_KEY));
+  if(testRes.status === 401){
+    keyMsg.textContent = "Түлхүүр буруу байна.";
+    keyMsg.className = "msg err";
+    document.getElementById('mainArea').style.display = "none";
+    return;
+  }
+  keyMsg.textContent = "";
+  document.getElementById('mainArea').style.display = "block";
+  resetForm();
+  await loadProducts();
+  await loadSettings();
+});
+
+document.getElementById('adminKey').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('loadBtn').click(); });
+</script>
+
+</body>
+</html>
