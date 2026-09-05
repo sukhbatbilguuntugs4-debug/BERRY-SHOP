@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BERRY — Захиалгууд (Админ)</title>
+<style>
+  body{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#F7F3FC; margin:0; padding: 30px 5vw; color:#241A35; }
+  h1{ font-size: 22px; margin-bottom: 20px; }
+  .key-box{ display:flex; gap:10px; margin-bottom: 24px; flex-wrap: wrap; }
+  input{ padding:10px 14px; border-radius:8px; border:1px solid #E1D5F3; font-size:14px; flex:1; min-width:180px; }
+  button{ padding:10px 18px; border-radius:8px; border:none; background:#6D3FD6; color:#fff; font-weight:700; cursor:pointer; }
+  button:hover{ background:#8B5CF6; }
+  table{ width:100%; border-collapse: collapse; background:#fff; border-radius:12px; overflow:hidden; }
+  th, td{ text-align:left; padding: 12px 14px; border-bottom:1px solid #E1D5F3; font-size:14px; vertical-align:top; }
+  th{ background:#EFE7FA; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; }
+  .status{ padding:4px 10px; border-radius:100px; font-size:12px; font-weight:700; background:#EFE7FA; color:#6D3FD6; }
+  .empty{ color:#7C7189; padding: 30px 0; text-align:center; }
+  .items-list{ font-size:12px; color:#7C7189; }
+</style>
+</head>
+<body>
+
+<h1>BERRY — Захиалгын жагсаалт</h1>
+
+<div class="key-box">
+  <input type="password" id="adminKey" placeholder="Админ түлхүүр">
+  <button id="loadBtn">Ачаалах</button>
+</div>
+
+<div id="ordersWrap"><div class="empty">Түлхүүрээ оруулаад "Ачаалах" дарна уу.</div></div>
+
+<script>
+async function loadOrders(){
+  const key = document.getElementById('adminKey').value.trim();
+  const wrap = document.getElementById('ordersWrap');
+  wrap.innerHTML = '<div class="empty">Ачаалж байна...</div>';
+  try{
+    const res = await fetch('/api/orders?key=' + encodeURIComponent(key));
+    const data = await res.json();
+    if(!data.ok){
+      wrap.innerHTML = '<div class="empty">' + (data.error || 'Алдаа гарлаа.') + '</div>';
+      return;
+    }
+    if(data.orders.length === 0){
+      wrap.innerHTML = '<div class="empty">Одоогоор захиалга алга байна.</div>';
+      return;
+    }
+    wrap.innerHTML = `
+      <table>
+        <thead>
+          <tr><th>Огноо</th><th>Нэр</th><th>Утас</th><th>Бараа</th><th>Дүн</th><th>Төлөв</th></tr>
+        </thead>
+        <tbody>
+          ${data.orders.map(o => `
+            <tr>
+              <td>${new Date(o.createdAt).toLocaleString('mn-MN')}</td>
+              <td>${o.name}</td>
+              <td>${o.phone}</td>
+              <td class="items-list">${o.items.map(i => `${i.name} (${i.color||''} ${i.size||''}) x${i.qty}`).join('<br>')}</td>
+              <td>${Number(o.total).toLocaleString('mn-MN')}₮</td>
+              <td><span class="status">${o.status}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch(e){
+    wrap.innerHTML = '<div class="empty">Холболтын алдаа гарлаа.</div>';
+  }
+}
+document.getElementById('loadBtn').addEventListener('click', loadOrders);
+document.getElementById('adminKey').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') loadOrders(); });
+</script>
+
+</body>
+</html>
