@@ -115,6 +115,11 @@
 let ADMIN_KEY = "";
 let products = [];
 
+function imgSrc(img){
+  if(!img) return '';
+  return img.startsWith('data:') ? img : '/' + img;
+}
+
 function variantRow(v){
   v = v || { color: "", hex: "#6D3FD6", img: "" };
   const wrap = document.createElement('div');
@@ -127,27 +132,18 @@ function variantRow(v){
       <div class="field"><label>Зураг сонгох</label><input type="file" class="v-file" accept="image/*"></div>
     </div>
     <input type="hidden" class="v-img" value="${v.img}">
-    <div class="thumb">${v.img ? `<img src="/${v.img}">` : ''}</div>
+    <div class="thumb">${v.img ? `<img src="${imgSrc(v.img)}">` : ''}</div>
   `;
   wrap.querySelector('.remove-variant').addEventListener('click', ()=> wrap.remove());
-  wrap.querySelector('.v-file').addEventListener('change', async (e)=>{
+  wrap.querySelector('.v-file').addEventListener('change', (e)=>{
     const file = e.target.files[0];
     if(!file) return;
     const reader = new FileReader();
-    reader.onload = async ()=>{
-      const dataUrl = reader.result;
-      const res = await fetch('/api/upload?key=' + encodeURIComponent(ADMIN_KEY), {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ filename: file.name, dataUrl })
-      });
-      const data = await res.json();
-      if(data.ok){
-        wrap.querySelector('.v-img').value = data.path;
-        wrap.querySelector('.thumb').innerHTML = `<img src="/${data.path}">`;
-      } else {
-        alert('Зураг upload хийхэд алдаа гарлаа: ' + (data.error || ''));
-      }
+    reader.onload = ()=>{
+      // Зургийг шууд base64 хэлбэрээр хадгална - серверт тусад нь upload хийх шаардлагагүй,
+      // "Бараа хадгалах" дарахад бусад мэдээллийн хамт өгөгдлийн санд шууд орно.
+      wrap.querySelector('.v-img').value = reader.result;
+      wrap.querySelector('.thumb').innerHTML = `<img src="${reader.result}">`;
     };
     reader.readAsDataURL(file);
   });
@@ -201,7 +197,7 @@ function renderProductList(){
   }
   wrap.innerHTML = products.map(p => `
     <div class="product-row">
-      <img src="/${(p.variants[0] || {}).img || ''}">
+      <img src="${imgSrc((p.variants[0] || {}).img)}">
       <div class="info">
         <div class="n">${p.name}</div>
         <div class="m">${p.cat} · ${Number(p.price).toLocaleString('mn-MN')}₮${p.oldPrice ? ' (хуучин: ' + Number(p.oldPrice).toLocaleString('mn-MN') + '₮)' : ''}</div>
