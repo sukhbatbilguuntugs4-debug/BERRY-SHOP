@@ -13,8 +13,8 @@ const MONGODB_URI = process.env.MONGODB_URI || '';
 
 const DATA_DIR = path.join(__dirname, 'data');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
-const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json'); // анхны (seed) бүтээгдэхүүн
-const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json'); // анхны (seed) тохиргоо
+const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
+const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, '[]', 'utf-8');
@@ -37,16 +37,10 @@ function checkKey(req, res) {
   return true;
 }
 
-/* =====================================================================
-   ӨГӨГДЛИЙН ДАВХАРГА (Data layer)
-   MONGODB_URI байвал Mongo ашиглана, байхгүй бол JSON файл ашиглана.
-   Аль ч тохиолдолд дээрх /api/* route-ууд ижил ажиллана.
-===================================================================== */
+let store;
 
-let store; // энэ объект руу бид бодит хадгалалтын функцуудыг холбоно
-
-async function initFileStore() {
-  console.log('⚠️  MONGODB_URI олдсонгүй — локал JSON файлд хадгалж байна (Render free tier дээр диск бэхжихгүй байж болно).');
+async function initFileStore(reason) {
+  console.log(reason || '⚠️  MONGODB_URI олдсонгүй — локал JSON файлд хадгалж байна (Render free tier дээр диск бэхжихгүй байж болно).');
   store = {
     async getOrders() { return readJSON(ORDERS_FILE) || []; },
     async addOrder(order) {
@@ -94,15 +88,17 @@ async function initFileStore() {
 }
 
 async function initMongoStore() {
-  const { MongoClient } = require('mongodb');
-  const client = new MongoClient(MONGODB_URI);
+  const { MongoClient, ServerApiVersion } = require('mongodb');
+  const client = new MongoClient(MONGODB_URI, {
+    serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true },
+    family: 4
+  });
   await client.connect();
   const db = client.db('berry_shop');
   const orders = db.collection('orders');
   const products = db.collection('products');
   const settings = db.collection('settings');
 
-  // Анхны ажиллуулалт бол seed өгөгдлөөр дүүргэнэ
   if (await products.countDocuments() === 0) {
     const seed = readJSON(PRODUCTS_FILE) || [];
     if (seed.length) await products.insertMany(seed);
@@ -160,11 +156,7 @@ async function initMongoStore() {
   };
 }
 
-/* =====================================================================
-   ROUTES
-===================================================================== */
-
-app.use(express.json({ limit: '25mb' })); // зурган upload-д зориулж хэмжээг нэмэгдүүлсэн
+app.use(express.json({ limit: '25mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/orders', async (req, res) => {
@@ -229,17 +221,13 @@ app.post('/api/settings', async (req, res) => {
   res.json({ ok: true, settings: updated });
 });
 
-/* =====================================================================
-   START
-===================================================================== */
-
 async function start() {
   if (MONGODB_URI) {
     try {
       await initMongoStore();
     } catch (e) {
       console.error('❌ MongoDB холболт амжилтгүй боллоо, JSON файл руу шилжиж байна:', e.message);
-      await initFileStore();
+      await initFileStore('⚠️  MongoDB холболт амжилтгүй болсон тул локал JSON файлд хадгалж байна (Render free tier дээр диск бэхжихгүй байж болно).');
     }
   } else {
     await initFileStore();
