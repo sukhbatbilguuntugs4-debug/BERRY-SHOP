@@ -13,8 +13,8 @@ const MONGODB_URI = process.env.MONGODB_URI || '';
 
 const DATA_DIR = path.join(__dirname, 'data');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
-const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
-const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
+const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json'); // анхны (seed) бүтээгдэхүүн
+const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json'); // анхны (seed) тохиргоо
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, '[]', 'utf-8');
@@ -37,7 +37,13 @@ function checkKey(req, res) {
   return true;
 }
 
-let store;
+/* =====================================================================
+   ӨГӨГДЛИЙН ДАВХАРГА (Data layer)
+   MONGODB_URI байвал Mongo ашиглана, байхгүй бол JSON файл ашиглана.
+   Аль ч тохиолдолд дээрх /api/* route-ууд ижил ажиллана.
+===================================================================== */
+
+let store; // энэ объект руу бид бодит хадгалалтын функцуудыг холбоно
 
 async function initFileStore(reason) {
   console.log(reason || '⚠️  MONGODB_URI олдсонгүй — локал JSON файлд хадгалж байна (Render free tier дээр диск бэхжихгүй байж болно).');
@@ -91,7 +97,7 @@ async function initMongoStore() {
   const { MongoClient, ServerApiVersion } = require('mongodb');
   const client = new MongoClient(MONGODB_URI, {
     serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true },
-    family: 4
+    family: 4 // зарим hosting орчинд IPv6-той холбоотой TLS алдаа гардаг тул IPv4-г шахуу ашиглана
   });
   await client.connect();
   const db = client.db('berry_shop');
@@ -99,6 +105,7 @@ async function initMongoStore() {
   const products = db.collection('products');
   const settings = db.collection('settings');
 
+  // Анхны ажиллуулалт бол seed өгөгдлөөр дүүргэнэ
   if (await products.countDocuments() === 0) {
     const seed = readJSON(PRODUCTS_FILE) || [];
     if (seed.length) await products.insertMany(seed);
@@ -156,7 +163,11 @@ async function initMongoStore() {
   };
 }
 
-app.use(express.json({ limit: '25mb' }));
+/* =====================================================================
+   ROUTES
+===================================================================== */
+
+app.use(express.json({ limit: '25mb' })); // зурган upload-д зориулж хэмжээг нэмэгдүүлсэн
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/orders', async (req, res) => {
@@ -220,6 +231,10 @@ app.post('/api/settings', async (req, res) => {
   const updated = await store.saveSettings(req.body.settings || {});
   res.json({ ok: true, settings: updated });
 });
+
+/* =====================================================================
+   START
+===================================================================== */
 
 async function start() {
   if (MONGODB_URI) {
