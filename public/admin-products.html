@@ -97,6 +97,19 @@
     </div>
 
     <div class="field">
+      <label><input type="checkbox" id="pSoldOut" style="width:auto; margin-right:8px;">Барааны нөөц дууссан (Дууссан badge харагдана, Сагслах товч идэвхгүй болно)</label>
+    </div>
+
+    <div class="field">
+      <label>Дэлгүүрийн үзүүлэлт (олон сонголт хийж болно)</label>
+      <div style="display:flex; gap:16px; margin-top:6px;">
+        <label style="font-weight:400; text-transform:none;"><input type="checkbox" class="p-tag" value="featured" style="width:auto; margin-right:6px;">Онцлох</label>
+        <label style="font-weight:400; text-transform:none;"><input type="checkbox" class="p-tag" value="new" style="width:auto; margin-right:6px;">Шинэ</label>
+        <label style="font-weight:400; text-transform:none;"><input type="checkbox" class="p-tag" value="bestseller" style="width:auto; margin-right:6px;">Бестселлер</label>
+      </div>
+    </div>
+
+    <div class="field">
       <label>Өнгө / зурган хувилбарууд</label>
       <div id="variantsWrap"></div>
       <button type="button" class="secondary" id="addVariantBtn">+ Өнгө нэмэх</button>
@@ -164,6 +177,8 @@ function resetForm(){
   document.getElementById('pRating').value = "";
   document.getElementById('pReviews').value = "";
   document.getElementById('pSizes').value = "";
+  document.getElementById('pSoldOut').checked = false;
+  document.querySelectorAll('.p-tag').forEach(cb => cb.checked = false);
   document.getElementById('variantsWrap').innerHTML = "";
   document.getElementById('variantsWrap').appendChild(variantRow());
   document.getElementById('formTitle').textContent = "Шинэ бараа нэмэх";
@@ -180,6 +195,9 @@ function fillFormForEdit(p){
   document.getElementById('pRating').value = p.rating || "";
   document.getElementById('pReviews').value = p.reviews || "";
   document.getElementById('pSizes').value = (p.sizes || []).join(", ");
+  document.getElementById('pSoldOut').checked = !!p.soldOut;
+  const tags = p.tags || [];
+  document.querySelectorAll('.p-tag').forEach(cb => cb.checked = tags.includes(cb.value));
   document.getElementById('variantsWrap').innerHTML = "";
   (p.variants || []).forEach(v => document.getElementById('variantsWrap').appendChild(variantRow(v)));
   document.getElementById('formTitle').textContent = "Бараа засах: " + p.name;
@@ -200,7 +218,7 @@ function renderProductList(){
       <img src="${imgSrc((p.variants[0] || {}).img)}">
       <div class="info">
         <div class="n">${p.name}</div>
-        <div class="m">${p.cat} · ${Number(p.price).toLocaleString('mn-MN')}₮${p.oldPrice ? ' (хуучин: ' + Number(p.oldPrice).toLocaleString('mn-MN') + '₮)' : ''}</div>
+        <div class="m">${p.cat} · ${Number(p.price).toLocaleString('mn-MN')}₮${p.oldPrice ? ' (хуучин: ' + Number(p.oldPrice).toLocaleString('mn-MN') + '₮)' : ''}${p.soldOut ? ' · <b style="color:#C23B6B;">Дууссан</b>' : ''}${(p.tags && p.tags.length) ? ' · ' + p.tags.join(', ') : ''}</div>
       </div>
       <button class="secondary" data-action="edit" data-id="${p.id}">Засах</button>
       <button class="danger" data-action="delete" data-id="${p.id}">Устгах</button>
@@ -260,6 +278,8 @@ document.getElementById('saveProductBtn').addEventListener('click', async ()=>{
     rating: Number(document.getElementById('pRating').value) || 5,
     reviews: Number(document.getElementById('pReviews').value) || 0,
     sizes: document.getElementById('pSizes').value.split(',').map(s => s.trim()).filter(Boolean),
+    soldOut: document.getElementById('pSoldOut').checked,
+    tags: Array.from(document.querySelectorAll('.p-tag:checked')).map(cb => cb.value),
     variants
   };
 
