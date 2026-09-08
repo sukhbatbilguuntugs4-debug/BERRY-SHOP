@@ -171,7 +171,7 @@ app.use(express.json({ limit: '25mb' })); // зурган upload-д зориул
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/orders', async (req, res) => {
-  const { name, phone, items, total } = req.body;
+  const { name, phone, address, items, total } = req.body;
   if (!name || !phone || !items || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ ok: false, error: 'Мэдээлэл дутуу байна.' });
   }
@@ -179,6 +179,7 @@ app.post('/api/orders', async (req, res) => {
     id: Date.now(),
     name: String(name).slice(0, 200),
     phone: String(phone).slice(0, 50),
+    address: String(address || '').slice(0, 300),
     items, total: Number(total) || 0,
     status: 'Шинэ',
     createdAt: new Date().toISOString()

@@ -33,7 +33,8 @@
     margin:0;
     background: var(--bg);
     color: var(--text);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16.5px;
     line-height: 1.5;
   }
   a{ color:inherit; text-decoration:none; }
@@ -83,7 +84,7 @@
   .logo-text{ font-family: Arial, Helvetica, sans-serif; font-size: 21px; font-weight: 800; letter-spacing: 2px; color: var(--text); }
 
   .main-nav{ display:flex; gap: 26px; flex:1; justify-content:center; }
-  .main-nav a{ font-size:13px; font-weight:700; letter-spacing:0.5px; color: var(--text); padding: 6px 0; border-bottom: 2px solid transparent; }
+  .main-nav a{ font-size:14px; font-weight:700; letter-spacing:0.5px; color: var(--text); padding: 6px 0; border-bottom: 2px solid transparent; }
   .main-nav a:hover{ border-color: var(--purple); color: var(--purple); }
 
   .header-icons{ display:flex; align-items:center; gap: 8px; flex-shrink:0; }
@@ -130,10 +131,22 @@
   .cat-icon-item span{ font-size:11px; font-weight:700; letter-spacing:0.6px; color: var(--text); }
 
   /* ---------- Hero ---------- */
-  .hero{ padding: 64px 6vw 44px; max-width: 780px; }
-  .hero .kicker{ color: var(--purple); font-size: 12px; font-weight: 700; letter-spacing:1px; margin-bottom: 14px; }
-  .hero h1{ font-size: clamp(30px, 5vw, 50px); line-height: 1.1; margin: 0 0 18px; color: var(--text); font-weight:800; }
-  .hero p{ font-size: 15px; color: var(--text-dim); max-width: 46ch; margin: 0 0 26px; }
+  .hero{ display:flex; align-items:center; gap: 44px; padding: 56px 6vw 48px; }
+  .hero-content{ flex: 1 1 420px; max-width: 560px; }
+  .hero .kicker{ color: var(--purple); font-size: 12px; font-weight: 700; letter-spacing:1px; margin-bottom: 16px; }
+  .hero h1{ font-size: clamp(30px, 5vw, 50px); line-height: 1.15; margin: 0 0 22px; color: var(--text); font-weight:800; }
+  .hero p{ font-size: 16.5px; line-height:1.6; color: var(--text-dim); max-width: 46ch; margin: 0 0 30px; }
+
+  .hero-visual{
+    flex: 1 1 340px; max-width: 420px; aspect-ratio: 4/5; border-radius: 22px;
+    background: linear-gradient(155deg, #EDE4FB 0%, #F7F3FC 65%);
+    border: 1px solid var(--line); position: relative; overflow: hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .hero-visual .hv-blob{ position:absolute; border-radius:50%; filter: blur(40px); opacity:0.55; }
+  .hero-visual svg{ position:relative; z-index:2; width: 46%; }
+  .hero-visual .hv-tag{ position:absolute; bottom:16px; left:16px; font-size:11px; font-weight:700; letter-spacing:1px; color: var(--purple-deep); background:rgba(255,255,255,0.75); padding:5px 10px; border-radius:100px; z-index:2; }
+  @media (max-width: 900px){ .hero-visual{ display:none; } }
   .hero-cta{
     display:inline-flex; align-items:center; gap: 10px;
     background: var(--purple); color: #fff; font-weight: 700; font-size: 13px;
@@ -141,6 +154,33 @@
     transition: background .2s ease, transform .15s ease;
   }
   .hero-cta:hover{ background: var(--purple-bright); transform: translateY(-1px); }
+  .hero-cta-secondary{
+    display:inline-flex; align-items:center; gap: 8px;
+    background: #fff; color: var(--purple-deep); font-weight: 700; font-size: 13px;
+    padding: 12px 22px; border: 1px solid var(--purple); border-radius: 100px; letter-spacing:0.3px;
+    transition: background .2s ease;
+  }
+  .hero-cta-secondary:hover{ background: var(--surface-2); }
+
+  .modal-overlay{ position: fixed; inset:0; background: rgba(10,12,15,0.45); opacity:0; pointer-events:none; transition: opacity .2s ease; z-index: 70; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .quiz-modal{ background:#fff; border-radius:18px; max-width:420px; width:100%; padding:28px; position:relative; max-height:88vh; overflow-y:auto; }
+  .quiz-modal h3{ margin:0 0 6px; font-size:19px; }
+  .quiz-modal p.sub{ font-size:13px; color:var(--text-dim); margin:0 0 20px; }
+  .quiz-close{ position:absolute; top:16px; right:18px; background:none; border:none; font-size:22px; color:var(--text-dim); }
+  .quiz-step{ display:none; }
+  .quiz-step.active{ display:block; }
+  .quiz-field{ margin-bottom:16px; }
+  .quiz-field label{ display:block; font-size:12px; font-weight:700; color:var(--text-dim); margin-bottom:6px; }
+  .quiz-field input, .quiz-field select{ width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--line); font-size:14px; font-family:inherit; }
+  .quiz-options{ display:flex; gap:8px; flex-wrap:wrap; }
+  .quiz-opt{ flex:1; min-width:100px; padding:10px; border:1px solid var(--line); border-radius:10px; background:#fff; font-size:13px; font-weight:600; text-align:center; }
+  .quiz-opt.selected{ border-color:var(--purple); background:var(--surface-2); color:var(--purple-deep); }
+  .quiz-nav{ display:flex; justify-content:space-between; margin-top:20px; gap:10px; }
+  .quiz-btn{ padding:10px 20px; border-radius:100px; font-size:13px; font-weight:700; border:1px solid var(--line); background:#fff; color:var(--text); }
+  .quiz-btn.primary{ background:var(--purple); color:#fff; border-color:var(--purple); }
+  .quiz-result{ text-align:center; padding:10px 0; }
+  .quiz-result .size-big{ font-size:44px; font-weight:800; color:var(--purple); margin:14px 0; }
 
   /* ---------- Tag tabs ---------- */
   .tag-tabs{
@@ -175,8 +215,8 @@
   .tile{ position: relative; height: 260px; background: var(--photo-bg); display:flex; align-items:center; justify-content:center; overflow:hidden; padding: 12px; }
   .tile img{ max-width: 100%; max-height: 100%; object-fit: contain; }
   .card-body{ padding: 13px 15px 15px; display:flex; flex-direction: column; gap: 8px; flex: 1; }
-  .card-body .name{ font-size: 13px; font-weight: 700; color: var(--text); }
-  .card-body .cat{ font-size: 11px; color: var(--text-dim); margin-top: -4px; }
+  .card-body .name{ font-size: 14.5px; font-weight: 700; color: var(--text); }
+  .card-body .cat{ font-size: 12px; color: var(--text-dim); margin-top: -4px; }
 
   .swatches{ display:flex; gap: 7px; align-items:center; }
   .swatch{ width: 19px; height:19px; border-radius: 50%; border: 2px solid var(--line); cursor:pointer; background:#fff; display:flex; align-items:center; justify-content:center; transition: border-color .15s ease; }
@@ -188,9 +228,9 @@
   .size-btn.active{ background: var(--text); border-color: var(--text); color: #fff; }
 
   .card-footer{ margin-top: auto; display:flex; align-items:center; justify-content: space-between; }
-  .price{ font-size: 14px; font-weight: 800; color: var(--purple-deep); }
+  .price{ font-size: 16px; font-weight: 800; color: var(--purple-deep); }
   .old-price{ font-size: 11px; color: var(--text-dim); text-decoration: line-through; margin-right: 5px; }
-  .add-btn{ background: transparent; border: 1px solid var(--text); color: var(--text); padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; transition: all .2s ease; }
+  .add-btn{ background: transparent; border: 1px solid var(--text); color: var(--text); padding: 7px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; transition: all .2s ease; }
   .add-btn:hover{ background: var(--text); color: #fff; }
   .add-btn.added{ background: var(--purple); border-color: var(--purple); color:#fff; }
   .add-btn:disabled{ opacity:0.45; cursor:not-allowed; }
@@ -200,7 +240,7 @@
   .badge-tag.sale{ background: var(--text); }
   .badge-tag.soldout{ background: var(--red); }
 
-  .rating-row{ display:flex; align-items:center; gap: 5px; font-size: 11px; color: var(--text-dim); margin-top:-4px; }
+  .rating-row{ display:flex; align-items:center; gap: 5px; font-size: 12.5px; color: var(--text-dim); margin-top:-4px; }
   .rating-row .stars{ color: var(--purple); letter-spacing: 1px; }
 
   .wish-btn{
@@ -244,7 +284,7 @@
   .drawer-foot{ padding: 16px 22px 22px; border-top: 1px solid var(--line); }
 
   .order-form{ display:flex; flex-direction:column; gap:10px; margin-bottom: 16px; }
-  .order-form input{ background: var(--surface-2); border: 1px solid var(--line); color: var(--text); padding: 9px 12px; border-radius: 8px; font-size: 13px; font-family: inherit; }
+  .order-form input{ background: var(--surface-2); border: 1px solid var(--line); color: var(--text); padding: 10px 12px; border-radius: 8px; font-size: 14.5px; font-family: inherit; }
   .order-form input::placeholder{ color: var(--text-dim); }
   .order-form input:focus{ outline:none; border-color: var(--purple); }
 
@@ -256,7 +296,7 @@
   .total-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; }
   .total-row .label{ font-size:13px; color: var(--text-dim); }
   .total-row .amount{ font-size:20px; font-weight:800; color: var(--purple-deep); }
-  .checkout-btn{ width:100%; background: var(--purple); border:none; color:#fff; font-weight:800; font-size:14px; padding:13px; border-radius: 100px; }
+  .checkout-btn{ width:100%; background: var(--purple); border:none; color:#fff; font-weight:800; font-size:15px; padding:13px; border-radius: 100px; }
   .checkout-btn:hover{ background: var(--purple-bright); }
   .checkout-btn:disabled{ opacity:0.4; cursor:not-allowed; }
 
@@ -335,6 +375,10 @@
     <button class="icon-btn" id="searchToggle" aria-label="Хайх">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
+    <button class="icon-btn" id="wishToggle" aria-label="Хүслийн жагсаалт">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+      <span class="cart-badge" id="wishCount" style="display:none;">0</span>
+    </button>
     <button class="icon-btn" id="cartToggle" aria-label="Сагс">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
       <span class="cart-badge" id="cartCount">0</span>
@@ -351,10 +395,21 @@
 <section class="category-strip" id="categoryStrip"></section>
 
 <section class="hero">
-  <div class="kicker">2026 ОНЫ ШИНЭ ЦУГЛУУЛГА</div>
-  <h1>Энгийн. Тод. Өдөр тутмын.</h1>
-  <p>BERRY — хотын амьдралд зориулсан цамц, куртикны цуглуулга. Чанартай материал, цэвэр загвар.</p>
-  <button class="hero-cta" onclick="document.getElementById('shopGrid').scrollIntoView({behavior:'smooth'})">ДЭЛГҮҮР ҮЗЭХ</button>
+  <div class="hero-content">
+    <div class="kicker">2026 ОНЫ ШИНЭ ЦУГЛУУЛГА</div>
+    <h1>Энгийн. Тод. Өдөр тутмын.</h1>
+    <p>BERRY — хотын амьдралд зориулсан цамц, куртикны цуглуулга. Чанартай материал, цэвэр загвар.</p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <button class="hero-cta" onclick="document.getElementById('shopGrid').scrollIntoView({behavior:'smooth'})">ДЭЛГҮҮР ҮЗЭХ</button>
+      <button class="hero-cta-secondary" id="quizOpenBtn">📏 РАЗМЕРАА ОЛОХ</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <span class="hv-blob" style="width:180px;height:180px; top:-30px; right:-20px; background:#8B5CF6;"></span>
+    <span class="hv-blob" style="width:140px;height:140px; bottom:-20px; left:-20px; background:#C3B6EE;"></span>
+    <svg viewBox="0 0 24 24" stroke-width="1.3" stroke="#6D3FD6" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4 3 7l2.5 3L7 9v11h10V9l1.5 1L21 7l-4-3h-2a3 3 0 0 1-6 0z"/></svg>
+    <span class="hv-tag">BERRY · 2026</span>
+  </div>
 </section>
 
 <div class="tag-tabs" id="tagTabs"></div>
@@ -412,6 +467,7 @@
     <div class="order-form" id="orderForm" style="display:none;">
       <input type="text" id="custName" placeholder="Нэр">
       <input type="tel" id="custPhone" placeholder="Утасны дугаар">
+      <input type="text" id="custAddress" placeholder="Хүргэлтийн хаяг (дүүрэг, хороо, байр)">
     </div>
     <div class="pay-info" id="payInfo">
       Захиалгын дүнг доорх дансанд шилжүүлнэ үү:<br>
@@ -425,6 +481,60 @@
       <span class="amount" id="totalAmount">0₮</span>
     </div>
     <button class="checkout-btn" id="checkoutBtn">ЗАХИАЛГА ӨГӨХ</button>
+  </div>
+</div>
+
+<div class="drawer" id="wishDrawer">
+  <div class="drawer-head">
+    <h3>Хүслийн жагсаалт</h3>
+    <button class="close-btn" id="wishDrawerClose">×</button>
+  </div>
+  <div class="drawer-items" id="wishItems"></div>
+</div>
+
+<div class="modal-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <button class="quiz-close" id="quizClose">×</button>
+
+    <div class="quiz-step active" data-step="1">
+      <h3>Размераа олоорой</h3>
+      <p class="sub">3 хэдхэн асуулт — 10 секунд</p>
+      <div class="quiz-field">
+        <label>Өндөр (см)</label>
+        <input type="number" id="quizHeight" placeholder="жишээ: 175">
+      </div>
+      <div class="quiz-field">
+        <label>Жин (кг)</label>
+        <input type="number" id="quizWeight" placeholder="жишээ: 68">
+      </div>
+      <div class="quiz-nav"><span></span><button class="quiz-btn primary" id="quizNext1">Дараах →</button></div>
+    </div>
+
+    <div class="quiz-step" data-step="2">
+      <h3>Тохирох загвар</h3>
+      <p class="sub">Ямар агаад таалагдах вэ?</p>
+      <div class="quiz-field">
+        <div class="quiz-options" id="fitOptions">
+          <button class="quiz-opt" data-fit="tight">Биед нийцсэн</button>
+          <button class="quiz-opt" data-fit="regular">Энгийн</button>
+          <button class="quiz-opt" data-fit="loose">Чөлөөтэй, том</button>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="quiz-btn" id="quizBack2">← Буцах</button>
+        <button class="quiz-btn primary" id="quizNext2">Үр дүн харах →</button>
+      </div>
+    </div>
+
+    <div class="quiz-step" data-step="3">
+      <div class="quiz-result">
+        <p class="sub" style="margin-bottom:0;">Танд тохирох размер:</p>
+        <div class="size-big" id="quizResultSize">M</div>
+        <p style="font-size:13px; color:var(--text-dim);">Энэ бол ойролцоо санал — бүтээгдэхүүн бүрийн нарийвчилсан размерын хүснэгтийг мөн шалгаарай.</p>
+        <button class="quiz-btn primary" id="quizToShop" style="margin-top:10px; width:100%;">Дэлгүүр рүү очих</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -447,7 +557,7 @@ let searchTerm = "";
 let products = [];
 let selectedVariant = {};
 let selectedSize = {};
-let wishlist = {};
+let wishlist = JSON.parse(localStorage.getItem('berry_wishlist') || '{}');
 let cart = {};
 
 const fmt = n => n.toLocaleString('mn-MN') + "₮";
@@ -518,6 +628,7 @@ function renderGrid(){
   grid.innerHTML = list.map(p => {
     const vIndex = selectedVariant[p.id] ?? 0;
     const variant = p.variants[vIndex];
+    const altVariant = p.variants[vIndex === 0 ? (p.variants.length > 1 ? 1 : 0) : 0];
     const size = selectedSize[p.id] ?? p.sizes[0];
     const isWished = !!wishlist[p.id];
     return `
@@ -525,7 +636,7 @@ function renderGrid(){
       <div class="tile">
         ${p.soldOut ? `<div class="badge-tag soldout">Дууссан</div>` : (p.badge === "new" ? `<div class="badge-tag new">Шинэ</div>` : (p.badge === "sale" ? `<div class="badge-tag sale">Хямдрал</div>` : ''))}
         <button class="wish-btn ${isWished ? 'active' : ''}" data-pid="${p.id}" data-action="wish">${isWished ? '♥' : '♡'}</button>
-        <img src="${variant.img}" alt="${p.name} - ${variant.color}">
+        <img src="${variant.img}" data-main-img="${variant.img}" data-alt-img="${altVariant.img}" alt="${p.name} - ${variant.color}">
       </div>
       <div class="card-body">
         <div class="name">${p.name}</div>
@@ -556,11 +667,26 @@ function renderGrid(){
   grid.querySelectorAll('.swatch').forEach(btn=>{
     btn.addEventListener('click', ()=>{ selectedVariant[Number(btn.dataset.pid)] = Number(btn.dataset.vi); renderGrid(); });
   });
+  grid.querySelectorAll('.tile img').forEach(img=>{
+    const main = img.dataset.mainImg;
+    const alt = img.dataset.altImg;
+    if(!alt || alt === main) return; // ижил зураг байвал hover хэрэггүй
+    const card = img.closest('.card');
+    card.addEventListener('mouseenter', ()=>{ img.src = alt; });
+    card.addEventListener('mouseleave', ()=>{ img.src = main; });
+  });
   grid.querySelectorAll('.size-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{ selectedSize[Number(btn.dataset.pid)] = btn.dataset.size; renderGrid(); });
   });
   grid.querySelectorAll('[data-action="wish"]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ const pid=Number(btn.dataset.pid); wishlist[pid] = !wishlist[pid]; renderGrid(); });
+    btn.addEventListener('click', ()=>{
+      const pid=Number(btn.dataset.pid);
+      wishlist[pid] = !wishlist[pid];
+      if(!wishlist[pid]) delete wishlist[pid];
+      localStorage.setItem('berry_wishlist', JSON.stringify(wishlist));
+      renderGrid();
+      updateWishUI();
+    });
   });
   grid.querySelectorAll('.add-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -575,6 +701,43 @@ function renderGrid(){
       btn.classList.add('added');
       setTimeout(()=>{ btn.textContent = "Сагслах"; btn.classList.remove('added'); }, 900);
       updateCartUI();
+    });
+  });
+}
+
+function updateWishUI(){
+  const ids = Object.keys(wishlist).filter(id => wishlist[id]);
+  const wishCountEl = document.getElementById('wishCount');
+  if(ids.length > 0){ wishCountEl.style.display='flex'; wishCountEl.textContent = ids.length; }
+  else { wishCountEl.style.display='none'; }
+
+  const container = document.getElementById('wishItems');
+  if(ids.length === 0){
+    container.innerHTML = `<div class="empty-msg">Хүслийн жагсаалт хоосон байна. Бараа дээрх ♡ товч дарж нэмээрэй.</div>`;
+    return;
+  }
+  container.innerHTML = ids.map(id=>{
+    const p = products.find(p => String(p.id) === id);
+    if(!p) return '';
+    const v = p.variants[0];
+    return `
+      <div class="drawer-item">
+        <div class="di-thumb"><img src="${v.img}" alt="${p.name}"></div>
+        <div class="di-info">
+          <div class="di-name">${p.name}</div>
+          <div class="di-price">${fmt(p.price)}</div>
+        </div>
+        <button class="remove-btn" data-wpid="${p.id}" data-action="unwish">Хасах</button>
+      </div>
+    `;
+  }).join('');
+
+  container.querySelectorAll('[data-action="unwish"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      delete wishlist[btn.dataset.wpid];
+      localStorage.setItem('berry_wishlist', JSON.stringify(wishlist));
+      updateWishUI();
+      renderGrid();
     });
   });
 }
@@ -639,6 +802,7 @@ function updateCartUI(){
 }
 
 document.getElementById('cartToggle').addEventListener('click', ()=>{
+  document.getElementById('wishDrawer').classList.remove('open');
   document.getElementById('drawer').classList.add('open');
   document.getElementById('overlay').classList.add('open');
 });
@@ -646,8 +810,71 @@ document.getElementById('drawerClose').addEventListener('click', closeDrawer);
 document.getElementById('overlay').addEventListener('click', closeDrawer);
 function closeDrawer(){
   document.getElementById('drawer').classList.remove('open');
+  document.getElementById('wishDrawer').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
 }
+
+document.getElementById('wishToggle').addEventListener('click', ()=>{
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('wishDrawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+});
+document.getElementById('wishDrawerClose').addEventListener('click', closeDrawer);
+
+/* ---------- Size quiz ---------- */
+let quizFit = 'regular';
+const quizOverlay = document.getElementById('quizOverlay');
+function openQuiz(){
+  quizOverlay.classList.add('open');
+  quizOverlay.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+  quizOverlay.querySelector('[data-step="1"]').classList.add('active');
+}
+function closeQuiz(){ quizOverlay.classList.remove('open'); }
+document.getElementById('quizOpenBtn').addEventListener('click', openQuiz);
+document.getElementById('quizClose').addEventListener('click', closeQuiz);
+quizOverlay.addEventListener('click', (e)=>{ if(e.target === quizOverlay) closeQuiz(); });
+
+function goStep(n){
+  quizOverlay.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+  quizOverlay.querySelector(`[data-step="${n}"]`).classList.add('active');
+}
+document.getElementById('quizNext1').addEventListener('click', ()=> goStep(2));
+document.getElementById('quizBack2').addEventListener('click', ()=> goStep(1));
+
+document.querySelectorAll('#fitOptions .quiz-opt').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#fitOptions .quiz-opt').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    quizFit = btn.dataset.fit;
+  });
+});
+
+document.getElementById('quizNext2').addEventListener('click', ()=>{
+  const h = Number(document.getElementById('quizHeight').value) || 170;
+  const w = Number(document.getElementById('quizWeight').value) || 65;
+  // энгийн, ойролцоо размер тооцоолол (BMI-д тулгуурласан heuristics)
+  const bmi = w / ((h/100) * (h/100));
+  let size = 'M';
+  if(bmi < 19) size = 'XS';
+  else if(bmi < 21.5) size = 'S';
+  else if(bmi < 24.5) size = 'M';
+  else if(bmi < 28) size = 'L';
+  else size = 'XL';
+
+  const sizeOrder = ['XS','S','M','L','XL'];
+  let idx = sizeOrder.indexOf(size);
+  if(quizFit === 'tight' && idx > 0) idx -= 1;
+  if(quizFit === 'loose' && idx < sizeOrder.length-1) idx += 1;
+  size = sizeOrder[idx];
+
+  document.getElementById('quizResultSize').textContent = size;
+  goStep(3);
+});
+
+document.getElementById('quizToShop').addEventListener('click', ()=>{
+  closeQuiz();
+  document.getElementById('shopGrid').scrollIntoView({behavior:'smooth'});
+});
 
 document.getElementById('searchToggle').addEventListener('click', ()=>{
   document.getElementById('searchExpand').classList.toggle('open');
@@ -661,7 +888,8 @@ document.getElementById('searchInput').addEventListener('input', (e)=>{
 document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
   const name = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
-  if(!name || !phone){ alert("Нэр болон утасны дугаараа оруулна уу."); return; }
+  const address = document.getElementById('custAddress').value.trim();
+  if(!name || !phone || !address){ alert("Нэр, утасны дугаар, хүргэлтийн хаягаа бүрэн оруулна уу."); return; }
 
   const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
   const items = keys.map(k=>{
@@ -679,7 +907,7 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
   try{
     const res = await fetch('/api/orders', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, items, total })
+      body: JSON.stringify({ name, phone, address, items, total })
     });
     const data = await res.json();
     if(!data.ok) throw new Error(data.error || 'Алдаа гарлаа');
@@ -688,6 +916,7 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
     cart = {};
     document.getElementById('custName').value = "";
     document.getElementById('custPhone').value = "";
+    document.getElementById('custAddress').value = "";
     updateCartUI();
     closeDrawer();
   } catch(e){
@@ -724,6 +953,7 @@ async function loadShopData(){
   renderFilters();
   renderGrid();
   updateCartUI();
+  updateWishUI();
 }
 
 loadShopData();

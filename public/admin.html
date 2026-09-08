@@ -50,7 +50,7 @@ async function loadOrders(){
     wrap.innerHTML = `
       <table>
         <thead>
-          <tr><th>Огноо</th><th>Нэр</th><th>Утас</th><th>Бараа</th><th>Дүн</th><th>Төлөв</th></tr>
+          <tr><th>Огноо</th><th>Нэр</th><th>Утас</th><th>Хаяг</th><th>Бараа</th><th>Дүн</th><th>Төлөв</th></tr>
         </thead>
         <tbody>
           ${data.orders.map(o => `
@@ -58,6 +58,7 @@ async function loadOrders(){
               <td>${new Date(o.createdAt).toLocaleString('mn-MN')}</td>
               <td>${o.name}</td>
               <td>${o.phone}</td>
+              <td>${o.address || '—'}</td>
               <td class="items-list">${o.items.map(i => `${i.name} (${i.color||''} ${i.size||''}) x${i.qty}`).join('<br>')}</td>
               <td>${Number(o.total).toLocaleString('mn-MN')}₮</td>
               <td><span class="status">${o.status}</span></td>
