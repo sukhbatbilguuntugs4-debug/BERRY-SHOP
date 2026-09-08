@@ -141,7 +141,7 @@ function variantRow(v){
     <button type="button" class="remove-variant">Устгах</button>
     <div class="row3">
       <div class="field"><label>Өнгөний нэр</label><input type="text" class="v-color" value="${v.color}" placeholder="Хар"></div>
-      <div class="field"><label>Өнгөний код</label><input type="text" class="v-hex" value="${v.hex}" placeholder="#1A1A1A"></div>
+      <div class="field"><label>Өнгө сонгох</label><input type="color" class="v-hex" value="${v.hex && v.hex.startsWith('#') ? v.hex : '#6D3FD6'}" style="height:42px; padding:4px; cursor:pointer;"></div>
       <div class="field"><label>Зураг сонгох</label><input type="file" class="v-file" accept="image/*"></div>
     </div>
     <input type="hidden" class="v-img" value="${v.img}">
