@@ -131,22 +131,12 @@
   .cat-icon-item span{ font-size:11px; font-weight:700; letter-spacing:0.6px; color: var(--text); }
 
   /* ---------- Hero ---------- */
-  .hero{ display:flex; align-items:center; gap: 44px; padding: 56px 6vw 48px; }
-  .hero-content{ flex: 1 1 420px; max-width: 560px; }
+  .hero{ padding: 56px 6vw 48px; }
+  .hero-content{ max-width: 620px; }
   .hero .kicker{ color: var(--purple); font-size: 12px; font-weight: 700; letter-spacing:1px; margin-bottom: 16px; }
   .hero h1{ font-size: clamp(30px, 5vw, 50px); line-height: 1.15; margin: 0 0 22px; color: var(--text); font-weight:800; }
   .hero p{ font-size: 16.5px; line-height:1.6; color: var(--text-dim); max-width: 46ch; margin: 0 0 30px; }
 
-  .hero-visual{
-    flex: 1 1 340px; max-width: 420px; aspect-ratio: 4/5; border-radius: 22px;
-    background: linear-gradient(155deg, #EDE4FB 0%, #F7F3FC 65%);
-    border: 1px solid var(--line); position: relative; overflow: hidden;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .hero-visual .hv-blob{ position:absolute; border-radius:50%; filter: blur(40px); opacity:0.55; }
-  .hero-visual svg{ position:relative; z-index:2; width: 46%; }
-  .hero-visual .hv-tag{ position:absolute; bottom:16px; left:16px; font-size:11px; font-weight:700; letter-spacing:1px; color: var(--purple-deep); background:rgba(255,255,255,0.75); padding:5px 10px; border-radius:100px; z-index:2; }
-  @media (max-width: 900px){ .hero-visual{ display:none; } }
   .hero-cta{
     display:inline-flex; align-items:center; gap: 10px;
     background: var(--purple); color: #fff; font-weight: 700; font-size: 13px;
@@ -404,12 +394,6 @@
       <button class="hero-cta-secondary" id="quizOpenBtn">📏 РАЗМЕРАА ОЛОХ</button>
     </div>
   </div>
-  <div class="hero-visual">
-    <span class="hv-blob" style="width:180px;height:180px; top:-30px; right:-20px; background:#8B5CF6;"></span>
-    <span class="hv-blob" style="width:140px;height:140px; bottom:-20px; left:-20px; background:#C3B6EE;"></span>
-    <svg viewBox="0 0 24 24" stroke-width="1.3" stroke="#6D3FD6" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M7 4 3 7l2.5 3L7 9v11h10V9l1.5 1L21 7l-4-3h-2a3 3 0 0 1-6 0z"/></svg>
-    <span class="hv-tag">BERRY · 2026</span>
-  </div>
 </section>
 
 <div class="tag-tabs" id="tagTabs"></div>
@@ -496,9 +480,26 @@
   <div class="quiz-modal">
     <button class="quiz-close" id="quizClose">×</button>
 
-    <div class="quiz-step active" data-step="1">
+    <div class="quiz-step active" data-step="known">
       <h3>Размераа олоорой</h3>
-      <p class="sub">3 хэдхэн асуулт — 10 секунд</p>
+      <p class="sub">Ердийн байдлаар ямар размер өмсдөг вэ?</p>
+      <div class="quiz-field">
+        <div class="quiz-options" id="knownSizeOptions">
+          <button class="quiz-opt" data-size="S">S</button>
+          <button class="quiz-opt" data-size="M">M</button>
+          <button class="quiz-opt" data-size="L">L</button>
+          <button class="quiz-opt" data-size="XL">XL</button>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <span></span>
+        <button class="quiz-btn" id="quizDontKnow">Мэдэхгүй, тооцоолъё →</button>
+      </div>
+    </div>
+
+    <div class="quiz-step" data-step="measure">
+      <h3>Размераа тооцоолъё</h3>
+      <p class="sub">2 хэдхэн асуулт</p>
       <div class="quiz-field">
         <label>Өндөр (см)</label>
         <input type="number" id="quizHeight" placeholder="жишээ: 175">
@@ -507,30 +508,33 @@
         <label>Жин (кг)</label>
         <input type="number" id="quizWeight" placeholder="жишээ: 68">
       </div>
-      <div class="quiz-nav"><span></span><button class="quiz-btn primary" id="quizNext1">Дараах →</button></div>
+      <div class="quiz-nav">
+        <button class="quiz-btn" id="quizBackKnown">← Буцах</button>
+        <button class="quiz-btn primary" id="quizNextMeasure">Дараах →</button>
+      </div>
     </div>
 
-    <div class="quiz-step" data-step="2">
+    <div class="quiz-step" data-step="fit">
       <h3>Тохирох загвар</h3>
       <p class="sub">Ямар агаад таалагдах вэ?</p>
       <div class="quiz-field">
         <div class="quiz-options" id="fitOptions">
           <button class="quiz-opt" data-fit="tight">Биед нийцсэн</button>
-          <button class="quiz-opt" data-fit="regular">Энгийн</button>
+          <button class="quiz-opt selected" data-fit="regular">Энгийн</button>
           <button class="quiz-opt" data-fit="loose">Чөлөөтэй, том</button>
         </div>
       </div>
       <div class="quiz-nav">
-        <button class="quiz-btn" id="quizBack2">← Буцах</button>
-        <button class="quiz-btn primary" id="quizNext2">Үр дүн харах →</button>
+        <button class="quiz-btn" id="quizBackFit">← Буцах</button>
+        <button class="quiz-btn primary" id="quizShowResult">Үр дүн харах →</button>
       </div>
     </div>
 
-    <div class="quiz-step" data-step="3">
+    <div class="quiz-step" data-step="result">
       <div class="quiz-result">
         <p class="sub" style="margin-bottom:0;">Танд тохирох размер:</p>
         <div class="size-big" id="quizResultSize">M</div>
-        <p style="font-size:13px; color:var(--text-dim);">Энэ бол ойролцоо санал — бүтээгдэхүүн бүрийн нарийвчилсан размерын хүснэгтийг мөн шалгаарай.</p>
+        <p style="font-size:13px; color:var(--text-dim);">Энэ бол ойролцоо санал — брэнд бүр арай өөр хэмжээтэй байдаг тул бүтээгдэхүүн бүрийн нарийвчилсан размерын хүснэгтийг мөн шалгаарай.</p>
         <button class="quiz-btn primary" id="quizToShop" style="margin-top:10px; width:100%;">Дэлгүүр рүү очих</button>
       </div>
     </div>
@@ -822,25 +826,61 @@ document.getElementById('wishToggle').addEventListener('click', ()=>{
 document.getElementById('wishDrawerClose').addEventListener('click', closeDrawer);
 
 /* ---------- Size quiz ---------- */
+const sizeOrder = ['S','M','L','XL'];
 let quizFit = 'regular';
+let quizBaseIdx = 1; // M — мэдэгдэж буй размер эсвэл тооцооллоос ирнэ
 const quizOverlay = document.getElementById('quizOverlay');
+
 function openQuiz(){
   quizOverlay.classList.add('open');
-  quizOverlay.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
-  quizOverlay.querySelector('[data-step="1"]').classList.add('active');
+  document.getElementById('quizHeight').value = '';
+  document.getElementById('quizWeight').value = '';
+  quizFit = 'regular';
+  document.querySelectorAll('#fitOptions .quiz-opt').forEach(b => b.classList.toggle('selected', b.dataset.fit === 'regular'));
+  goStepName('known');
 }
 function closeQuiz(){ quizOverlay.classList.remove('open'); }
 document.getElementById('quizOpenBtn').addEventListener('click', openQuiz);
 document.getElementById('quizClose').addEventListener('click', closeQuiz);
 quizOverlay.addEventListener('click', (e)=>{ if(e.target === quizOverlay) closeQuiz(); });
 
-function goStep(n){
+function goStepName(name){
   quizOverlay.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
-  quizOverlay.querySelector(`[data-step="${n}"]`).classList.add('active');
+  quizOverlay.querySelector(`[data-step="${name}"]`).classList.add('active');
 }
-document.getElementById('quizNext1').addEventListener('click', ()=> goStep(2));
-document.getElementById('quizBack2').addEventListener('click', ()=> goStep(1));
 
+// Алхам 1: мэдэгдэж буй размер шууд сонгох
+document.querySelectorAll('#knownSizeOptions .quiz-opt').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    quizBaseIdx = sizeOrder.indexOf(btn.dataset.size);
+    goStepName('fit');
+  });
+});
+document.getElementById('quizDontKnow').addEventListener('click', ()=> goStepName('measure'));
+
+// Алхам 2 (сонголттой): өндөр/жингээр тооцоолох
+document.getElementById('quizBackKnown').addEventListener('click', ()=> goStepName('known'));
+document.getElementById('quizNextMeasure').addEventListener('click', ()=>{
+  const h = Number(document.getElementById('quizHeight').value) || 170;
+  const w = Number(document.getElementById('quizWeight').value) || 65;
+
+  // Үндсэн размерыг ӨНДӨРӨӨР тодорхойлно (хувцасны урт голчлон өндрөөс хамаардаг)
+  let idx = 1; // M
+  if(h < 168) idx = 0;       // S
+  else if(h < 178) idx = 1;  // M
+  else if(h < 188) idx = 2;  // L
+  else idx = 3;              // XL
+
+  // BMI-аар бага зэрэг тохируулна
+  const bmi = w / ((h/100) * (h/100));
+  if(bmi < 18.5) idx -= 1;
+  else if(bmi >= 28) idx += 1;
+
+  quizBaseIdx = Math.max(0, Math.min(sizeOrder.length - 1, idx));
+  goStepName('fit');
+});
+
+// Алхам 3: загварын сонголт (tight/regular/loose)
 document.querySelectorAll('#fitOptions .quiz-opt').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('#fitOptions .quiz-opt').forEach(b => b.classList.remove('selected'));
@@ -848,27 +888,20 @@ document.querySelectorAll('#fitOptions .quiz-opt').forEach(btn=>{
     quizFit = btn.dataset.fit;
   });
 });
+document.getElementById('quizBackFit').addEventListener('click', ()=>{
+  // Мэдэгдэж буй размерын замаас ирсэн бол "known" руу, тооцооллын замаас ирсэн бол "measure" руу буцаана
+  const cameFromMeasure = document.getElementById('quizHeight').value !== '';
+  goStepName(cameFromMeasure ? 'measure' : 'known');
+});
 
-document.getElementById('quizNext2').addEventListener('click', ()=>{
-  const h = Number(document.getElementById('quizHeight').value) || 170;
-  const w = Number(document.getElementById('quizWeight').value) || 65;
-  // энгийн, ойролцоо размер тооцоолол (BMI-д тулгуурласан heuristics)
-  const bmi = w / ((h/100) * (h/100));
-  let size = 'M';
-  if(bmi < 19) size = 'XS';
-  else if(bmi < 21.5) size = 'S';
-  else if(bmi < 24.5) size = 'M';
-  else if(bmi < 28) size = 'L';
-  else size = 'XL';
+document.getElementById('quizShowResult').addEventListener('click', ()=>{
+  let idx = quizBaseIdx;
+  if(quizFit === 'tight') idx -= 1;
+  if(quizFit === 'loose') idx += 1;
+  idx = Math.max(0, Math.min(sizeOrder.length - 1, idx));
 
-  const sizeOrder = ['XS','S','M','L','XL'];
-  let idx = sizeOrder.indexOf(size);
-  if(quizFit === 'tight' && idx > 0) idx -= 1;
-  if(quizFit === 'loose' && idx < sizeOrder.length-1) idx += 1;
-  size = sizeOrder[idx];
-
-  document.getElementById('quizResultSize').textContent = size;
-  goStep(3);
+  document.getElementById('quizResultSize').textContent = sizeOrder[idx];
+  goStepName('result');
 });
 
 document.getElementById('quizToShop').addEventListener('click', ()=>{
