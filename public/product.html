@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BERRY — Бүтээгдэхүүн</title>
+<style>
+  :root{
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-2: #F4F4F5;
+    --line: #C9A8F0; --line-soft: #E7D9FA;
+    --text: #111111; --text-dim: #6B6B70;
+    --purple: #6D3FD6; --purple-bright: #8B5CF6; --purple-deep: #3E2570;
+    --red: #E11D2E; --photo-bg: #F4F4F5;
+  }
+  *{ box-sizing: border-box; }
+  body{ margin:0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size:16.5px; line-height:1.5; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family: inherit; cursor:pointer; }
+
+  header{ display:flex; align-items:center; justify-content:space-between; padding:16px 6vw; border-bottom:1px solid var(--line); }
+  .logo{ display:flex; align-items:center; gap:8px; }
+  .logo-text{ font-family: Arial, Helvetica, sans-serif; font-size:20px; font-weight:800; letter-spacing:2px; }
+  .back-link{ font-size:13px; font-weight:700; color: var(--purple-deep); }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:36px 6vw 80px; }
+  .top{ display:grid; grid-template-columns: 1fr 1fr; gap:44px; }
+  @media (max-width:800px){ .top{ grid-template-columns:1fr; } }
+
+  .gallery-main{ background: var(--photo-bg); border:1px solid var(--line); border-radius:16px; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:12px; }
+  .gallery-main img{ max-width:100%; max-height:100%; object-fit:contain; }
+  .gallery-thumbs{ display:flex; gap:10px; flex-wrap:wrap; }
+  .gallery-thumbs img{ width:64px; height:64px; object-fit:cover; border-radius:8px; border:2px solid var(--line-soft); cursor:pointer; }
+  .gallery-thumbs img.active{ border-color: var(--purple); }
+
+  .info .cat{ font-size:13px; color:var(--text-dim); margin-bottom:6px; }
+  .info h1{ font-size:26px; margin:0 0 10px; }
+  .rating-row{ display:flex; align-items:center; gap:6px; font-size:13px; color:var(--text-dim); margin-bottom:16px; }
+  .rating-row .stars{ color:var(--purple); letter-spacing:1px; }
+  .price-row{ display:flex; align-items:baseline; gap:10px; margin-bottom:22px; }
+  .price{ font-size:26px; font-weight:800; color:var(--purple-deep); }
+  .old-price{ font-size:15px; color:var(--text-dim); text-decoration:line-through; }
+  .badge-tag{ display:inline-block; font-size:11px; font-weight:800; padding:4px 10px; border-radius:100px; color:#fff; margin-bottom:14px; }
+  .badge-tag.new{ background:var(--purple); }
+  .badge-tag.sale{ background:var(--text); }
+  .badge-tag.soldout{ background:var(--red); }
+
+  .opt-label{ font-size:12px; font-weight:700; color:var(--text-dim); margin:18px 0 8px; text-transform:uppercase; letter-spacing:0.5px; }
+  .swatches{ display:flex; gap:8px; }
+  .swatch{ width:30px; height:30px; border-radius:50%; border:2px solid var(--line); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .swatch.active{ border-color:var(--purple); }
+  .swatch-dot{ width:22px; height:22px; border-radius:50%; }
+  .size-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .size-btn{ border:1px solid var(--line); background:#fff; padding:8px 16px; border-radius:8px; font-size:14px; font-weight:700; }
+  .size-btn.active{ background:var(--text); border-color:var(--text); color:#fff; }
+
+  .add-btn{ width:100%; margin-top:26px; background:var(--purple); color:#fff; border:none; padding:15px; border-radius:100px; font-size:15px; font-weight:800; }
+  .add-btn:hover{ background:var(--purple-bright); }
+  .add-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .desc{ margin-top:24px; font-size:14.5px; color:var(--text-dim); line-height:1.7; }
+
+  .reviews-section{ margin-top:60px; max-width:720px; }
+  .reviews-section h2{ font-size:20px; margin-bottom:18px; }
+  .review-item{ border-bottom:1px solid var(--line-soft); padding:16px 0; }
+  .review-item .rhead{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .review-item .rname{ font-weight:700; font-size:14px; }
+  .review-item .rdate{ font-size:12px; color:var(--text-dim); }
+  .review-item .stars{ color:var(--purple); letter-spacing:1px; font-size:13px; }
+  .review-item .rcomment{ font-size:14px; color:var(--text-dim); line-height:1.6; margin-top:4px; }
+  .empty-msg{ color:var(--text-dim); font-size:14px; padding:16px 0; }
+
+  .review-form{ margin-top:26px; background:var(--surface-2); border-radius:14px; padding:20px; }
+  .review-form h3{ font-size:15px; margin:0 0 14px; }
+  .review-form .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .review-form input, .review-form select, .review-form textarea{ width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--line); font-size:14px; font-family:inherit; }
+  .review-form textarea{ min-height:80px; resize:vertical; }
+  .review-form button{ background:var(--purple); color:#fff; border:none; padding:10px 22px; border-radius:100px; font-weight:700; font-size:13px; }
+  .review-form button:hover{ background:var(--purple-bright); }
+  .review-msg{ font-size:13px; margin-top:8px; }
+  .review-msg.ok{ color:#2E7D32; }
+  .review-msg.err{ color:var(--red); }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="/">
+    <svg width="28" height="37" viewBox="0 0 377 507" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="198" cy="152" r="59" fill="#7C3AED"/>
+      <circle cx="203" cy="287" r="64" fill="#9333EA"/>
+      <rect x="105" y="90" width="32" height="268" rx="16" fill="#A855F7"/>
+      <path d="M121,40 C130,15 150,5 175,10 C185,12 186,20 178,24 C155,20 138,30 130,50 Z" fill="#22C55E"/>
+    </svg>
+    <span class="logo-text">BERRY</span>
+  </a>
+  <a class="back-link" href="/">← Дэлгүүр рүү буцах</a>
+</header>
+
+<div class="wrap" id="wrap">
+  <div class="empty-msg">Ачаалж байна...</div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const productId = Number(params.get('id'));
+let product = null;
+let selectedVariant = 0;
+let selectedSize = null;
+let galleryImages = [];
+let activeImg = '';
+
+const fmt = n => n.toLocaleString('mn-MN') + "₮";
+const stars = r => "★".repeat(Math.round(r)) + "☆".repeat(5 - Math.round(r));
+
+async function loadProduct(){
+  const wrap = document.getElementById('wrap');
+  try{
+    const res = await fetch('/api/products');
+    const data = await res.json();
+    product = (data.products || []).find(p => p.id === productId);
+    if(!product){
+      wrap.innerHTML = '<div class="empty-msg">Бүтээгдэхүүн олдсонгүй. <a href="/" style="color:var(--purple);">Дэлгүүр рүү буцах</a></div>';
+      return;
+    }
+    document.title = `BERRY — ${product.name}`;
+    selectedSize = product.sizes[0];
+    galleryImages = [...product.variants.map(v => v.img), ...(product.gallery || [])];
+    activeImg = product.variants[0].img;
+    render();
+    loadReviews();
+  } catch(e){
+    wrap.innerHTML = '<div class="empty-msg">Алдаа гарлаа. Дахин ачаална уу.</div>';
+  }
+}
+
+function render(){
+  const wrap = document.getElementById('wrap');
+  const v = product.variants[selectedVariant];
+  wrap.innerHTML = `
+    <div class="top">
+      <div>
+        <div class="gallery-main"><img id="mainImg" src="${activeImg}" alt="${product.name}"></div>
+        <div class="gallery-thumbs" id="thumbs">
+          ${galleryImages.map(img => `<img src="${img}" class="${img===activeImg?'active':''}" data-img="${img}">`).join('')}
+        </div>
+      </div>
+      <div class="info">
+        ${product.soldOut ? `<div class="badge-tag soldout">Дууссан</div>` : (product.badge === 'new' ? `<div class="badge-tag new">Шинэ</div>` : (product.badge === 'sale' ? `<div class="badge-tag sale">Хямдрал</div>` : ''))}
+        <div class="cat">${product.cat}</div>
+        <h1>${product.name}</h1>
+        <div class="rating-row"><span class="stars">${stars(product.rating)}</span> ${product.rating} (${product.reviews} сэтгэгдэл)</div>
+        <div class="price-row">
+          ${product.oldPrice ? `<span class="old-price">${fmt(product.oldPrice)}</span>` : ''}
+          <span class="price">${fmt(product.price)}</span>
+        </div>
+
+        <div class="opt-label">Өнгө: ${v.color}</div>
+        <div class="swatches" id="swatches">
+          ${product.variants.map((vv, i) => `<button class="swatch ${i===selectedVariant?'active':''}" data-vi="${i}"><span class="swatch-dot" style="background:${vv.hex}"></span></button>`).join('')}
+        </div>
+
+        <div class="opt-label">Размер</div>
+        <div class="size-row" id="sizes">
+          ${product.sizes.map(s => `<button class="size-btn ${s===selectedSize?'active':''}" data-size="${s}">${s}</button>`).join('')}
+        </div>
+
+        <button class="add-btn" id="addBtn" ${product.soldOut ? 'disabled' : ''}>${product.soldOut ? 'Дууссан' : 'Сагслах'}</button>
+
+        <p class="desc">${product.cat} ангилалын чанартай бүтээгдэхүүн. Захиалга өгсний дараа бид тантай холбогдож дэлгэрэнгүй мэдээлэл өгнө.</p>
+      </div>
+    </div>
+
+    <div class="reviews-section">
+      <h2>Сэтгэгдэл (${product.reviews})</h2>
+      <div id="reviewsList"><div class="empty-msg">Ачаалж байна...</div></div>
+
+      <div class="review-form">
+        <h3>Сэтгэгдэл үлдээх</h3>
+        <div class="row2">
+          <input type="text" id="revName" placeholder="Таны нэр">
+          <select id="revRating">
+            <option value="5">★★★★★ Маш сайн</option>
+            <option value="4">★★★★☆ Сайн</option>
+            <option value="3">★★★☆☆ Дунд зэрэг</option>
+            <option value="2">★★☆☆☆ Дунджаас доогуур</option>
+            <option value="1">★☆☆☆☆ Сайн бус</option>
+          </select>
+        </div>
+        <textarea id="revComment" placeholder="Таны сэтгэгдэл..."></textarea>
+        <div style="margin-top:10px;"><button id="revSubmit">Илгээх</button></div>
+        <div class="review-msg" id="revMsg"></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('thumbs').querySelectorAll('img').forEach(img=>{
+    img.addEventListener('click', ()=>{ activeImg = img.dataset.img; document.getElementById('mainImg').src = activeImg; document.querySelectorAll('#thumbs img').forEach(i=>i.classList.toggle('active', i.dataset.img===activeImg)); });
+  });
+  document.getElementById('swatches').querySelectorAll('.swatch').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ selectedVariant = Number(btn.dataset.vi); activeImg = product.variants[selectedVariant].img; render(); });
+  });
+  document.getElementById('sizes').querySelectorAll('.size-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ selectedSize = btn.dataset.size; render(); });
+  });
+  document.getElementById('addBtn').addEventListener('click', ()=>{
+    window.location.href = `/?addToCart=${product.id}&variant=${selectedVariant}&size=${encodeURIComponent(selectedSize)}`;
+  });
+  document.getElementById('revSubmit').addEventListener('click', submitReview);
+}
+
+async function loadReviews(){
+  const list = document.getElementById('reviewsList');
+  const res = await fetch('/api/reviews?productId=' + product.id);
+  const data = await res.json();
+  if(!data.ok || data.reviews.length === 0){
+    list.innerHTML = '<div class="empty-msg">Одоогоор сэтгэгдэл алга байна. Эхнийхээ үлдээгээрэй!</div>';
+    return;
+  }
+  list.innerHTML = data.reviews.map(r => `
+    <div class="review-item">
+      <div class="rhead">
+        <span class="rname">${r.name}</span>
+        <span class="rdate">${new Date(r.createdAt).toLocaleDateString('mn-MN')}</span>
+      </div>
+      <div class="stars">${stars(r.rating)}</div>
+      <div class="rcomment">${r.comment}</div>
+    </div>
+  `).join('');
+}
+
+async function submitReview(){
+  const msg = document.getElementById('revMsg');
+  const name = document.getElementById('revName').value.trim();
+  const rating = Number(document.getElementById('revRating').value);
+  const comment = document.getElementById('revComment').value.trim();
+  if(!name || !comment){
+    msg.textContent = "Нэр болон сэтгэгдлээ бичнэ үү.";
+    msg.className = "review-msg err";
+    return;
+  }
+  const res = await fetch('/api/reviews', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ productId: product.id, name, rating, comment })
+  });
+  const data = await res.json();
+  if(data.ok){
+    msg.textContent = "Баярлалаа! Таны сэтгэгдэл нэмэгдлээ ✓";
+    msg.className = "review-msg ok";
+    document.getElementById('revName').value = "";
+    document.getElementById('revComment').value = "";
+    loadReviews();
+  } else {
+    msg.textContent = "Алдаа: " + (data.error || '');
+    msg.className = "review-msg err";
+  }
+}
+
+loadProduct();
+</script>
+
+</body>
+</html>

@@ -87,6 +87,22 @@
   .main-nav a{ font-size:14px; font-weight:700; letter-spacing:0.5px; color: var(--text); padding: 6px 0; border-bottom: 2px solid transparent; }
   .main-nav a:hover{ border-color: var(--purple); color: var(--purple); }
 
+  .mobile-menu-btn{ display:none; }
+  .mobile-nav-overlay{ position:fixed; inset:0; background:rgba(10,12,15,0.4); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:65; }
+  .mobile-nav-overlay.open{ opacity:1; pointer-events:auto; }
+  .mobile-nav{
+    position:fixed; top:0; left:0; height:100%; width:min(300px,82vw); background:#fff;
+    border-right:1px solid var(--line); transform:translateX(-100%); transition:transform .3s ease; z-index:66;
+    display:flex; flex-direction:column;
+  }
+  .mobile-nav.open{ transform:translateX(0); }
+  .mobile-nav-head{ display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--line-soft); }
+  .mobile-nav-head .logo-text{ font-family: Arial, Helvetica, sans-serif; font-weight:800; letter-spacing:1.5px; font-size:15px; }
+  .mobile-nav-list{ padding:14px 10px; flex:1; }
+  .mobile-nav-list li a{ display:block; padding:13px 14px; font-size:15px; font-weight:700; color:var(--text); border-radius:10px; }
+  .mobile-nav-list li a:hover{ background:var(--surface-2); }
+  .mobile-nav-track{ display:block; padding:16px 20px; border-top:1px solid var(--line-soft); font-size:14px; font-weight:700; color:var(--purple-deep); }
+
   .header-icons{ display:flex; align-items:center; gap: 8px; flex-shrink:0; }
   .icon-btn{
     position:relative; background: transparent; border: 1px solid transparent;
@@ -283,6 +299,15 @@
   .pay-info b{ color: var(--text); }
   .pay-info .row{ display:flex; justify-content:space-between; margin-top:4px; }
 
+  .coupon-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .coupon-row input{ flex:1; background: var(--surface-2); border: 1px solid var(--line); color: var(--text); padding: 9px 12px; border-radius: 8px; font-size: 13px; font-family: inherit; text-transform:uppercase; }
+  .coupon-row input:focus{ outline:none; border-color: var(--purple); }
+  .coupon-row button{ background:#fff; border:1px solid var(--purple); color:var(--purple-deep); font-weight:700; font-size:12px; padding:0 16px; border-radius:8px; }
+  .coupon-row button:hover{ background: var(--surface-2); }
+  .coupon-msg{ font-size:12px; margin-bottom:10px; min-height:14px; }
+  .coupon-msg.ok{ color:#2E7D32; }
+  .coupon-msg.err{ color:var(--red); }
+
   .total-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; }
   .total-row .label{ font-size:13px; color: var(--text-dim); }
   .total-row .amount{ font-size:20px; font-weight:800; color: var(--purple-deep); }
@@ -300,6 +325,15 @@
   .newsletter button{ background: var(--purple); color: #fff; border: none; font-weight: 700; font-size: 13px; padding: 10px 20px; border-radius: 100px; }
   .newsletter button:hover{ background: var(--purple-bright); }
 
+  .faq-section{ max-width:720px; margin:0 auto; padding:44px 6vw; }
+  .faq-section h2{ font-size:22px; margin:0 0 20px; text-align:center; }
+  .faq-item{ border-bottom:1px solid var(--line-soft); }
+  .faq-q{ width:100%; text-align:left; background:none; border:none; padding:16px 4px; font-size:15px; font-weight:700; color:var(--text); display:flex; justify-content:space-between; align-items:center; }
+  .faq-q .plus{ font-size:20px; color:var(--purple); transition:transform .2s ease; }
+  .faq-item.open .faq-q .plus{ transform:rotate(45deg); }
+  .faq-a{ max-height:0; overflow:hidden; transition:max-height .25s ease; font-size:14px; color:var(--text-dim); line-height:1.6; }
+  .faq-item.open .faq-a{ max-height:200px; padding-bottom:16px; }
+
   footer{ border-top: 1px solid var(--line); padding: 40px 6vw 90px; display:flex; flex-wrap:wrap; gap: 24px; justify-content:space-between; color: var(--text-dim); font-size: 13px; }
   footer .f-logo{ display:flex; align-items:center; gap: 8px; }
   footer .f-logo .logo-text{ font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 800; color: var(--text); letter-spacing:1.5px; }
@@ -309,6 +343,7 @@
   @media (max-width: 640px){
     header.main-header{ padding: 12px 5vw; }
     .main-nav{ display:none; }
+    .mobile-menu-btn{ display:flex; }
     .hero{ padding: 44px 5vw 32px; }
     .category-strip{ padding: 20px 5vw; gap:18px; }
     .grid{ padding: 0 5vw 70px; gap: 16px; }
@@ -349,6 +384,10 @@
 </div>
 
 <header class="main-header">
+  <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Цэс">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+
   <div class="logo">
     <svg class="logo-mark" width="30" height="40" viewBox="0 0 377 507" xmlns="http://www.w3.org/2000/svg">
       <circle cx="198" cy="152" r="59" fill="#7C3AED"/>
@@ -375,6 +414,16 @@
     </button>
   </div>
 </header>
+
+<div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-head">
+    <span class="logo-text">МЕНЮ</span>
+    <button class="close-btn" id="mobileNavClose">×</button>
+  </div>
+  <ul class="mobile-nav-list" id="mobileNavList"></ul>
+  <a class="mobile-nav-track" href="/track.html">📦 Захиалгаа хайх</a>
+</nav>
 
 <div class="search-expand" id="searchExpand">
   <div class="search-expand-inner">
@@ -410,6 +459,11 @@
     <button type="submit">БҮРТГҮҮЛЭХ</button>
   </form>
 </div>
+
+<section class="faq-section">
+  <h2>Түгээмэл асуулт</h2>
+  <div class="faq-list" id="faqList"></div>
+</section>
 
 <footer id="site-footer">
   <div class="f-col">
@@ -459,6 +513,19 @@
       <div class="row"><span>Данс</span><b id="bankAccountOut">—</b></div>
       <div class="row"><span>Хүлээн авагч</span><b id="bankHolderOut">—</b></div>
       Шилжүүлгийн утга дээр нэр, утасны дугаараа бичнэ үү. Шилжүүлсний дараа бид холбогдож захиалгыг баталгаажуулна.
+    </div>
+    <div class="coupon-row" id="couponRow" style="display:none;">
+      <input type="text" id="couponInput" placeholder="Хямдралын код">
+      <button id="couponApplyBtn">Ашиглах</button>
+    </div>
+    <div class="coupon-msg" id="couponMsg"></div>
+    <div class="total-row" id="subtotalRow" style="display:none;">
+      <span class="label">Дэд дүн</span>
+      <span id="subtotalAmount" style="font-size:13px; color:var(--text-dim);">0₮</span>
+    </div>
+    <div class="total-row" id="discountRow" style="display:none;">
+      <span class="label">Хямдрал</span>
+      <span id="discountAmount" style="font-size:13px; color:var(--red);">−0₮</span>
     </div>
     <div class="total-row">
       <span class="label">Нийт дүн</span>
@@ -574,7 +641,28 @@ function renderNav(){
   nav.querySelectorAll('a').forEach(a=>{
     a.addEventListener('click', ()=>{ activeCat = a.dataset.cat; renderFilters(); renderGrid(); });
   });
+
+  const mobileList = document.getElementById('mobileNavList');
+  mobileList.innerHTML = `<li><a href="#shopGrid" data-cat="Бүгд">БҮГД</a></li>` +
+    cats.map(c => `<li><a href="#shopGrid" data-cat="${c}">${c.toUpperCase()}</a></li>`).join('');
+  mobileList.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=>{
+      activeCat = a.dataset.cat; renderFilters(); renderGrid(); closeMobileNav();
+    });
+  });
 }
+
+function closeMobileNav(){
+  document.getElementById('mobileNav').classList.remove('open');
+  document.getElementById('mobileNavOverlay').classList.remove('open');
+}
+document.getElementById('mobileMenuBtn').addEventListener('click', ()=>{
+  document.getElementById('mobileNav').classList.add('open');
+  document.getElementById('mobileNavOverlay').classList.add('open');
+});
+document.getElementById('mobileNavClose').addEventListener('click', closeMobileNav);
+document.getElementById('mobileNavOverlay').addEventListener('click', closeMobileNav);
+
 
 function renderCategoryStrip(){
   const el = document.getElementById('categoryStrip');
@@ -640,10 +728,10 @@ function renderGrid(){
       <div class="tile">
         ${p.soldOut ? `<div class="badge-tag soldout">Дууссан</div>` : (p.badge === "new" ? `<div class="badge-tag new">Шинэ</div>` : (p.badge === "sale" ? `<div class="badge-tag sale">Хямдрал</div>` : ''))}
         <button class="wish-btn ${isWished ? 'active' : ''}" data-pid="${p.id}" data-action="wish">${isWished ? '♥' : '♡'}</button>
-        <img src="${variant.img}" data-main-img="${variant.img}" data-alt-img="${altVariant.img}" alt="${p.name} - ${variant.color}">
+        <a href="/product.html?id=${p.id}"><img src="${variant.img}" data-main-img="${variant.img}" data-alt-img="${altVariant.img}" alt="${p.name} - ${variant.color}"></a>
       </div>
       <div class="card-body">
-        <div class="name">${p.name}</div>
+        <a href="/product.html?id=${p.id}" style="color:inherit;"><div class="name">${p.name}</div></a>
         <div class="cat">${p.cat} · ${variant.color}</div>
         <div class="rating-row"><span class="stars">${stars(p.rating)}</span> ${p.rating} (${p.reviews})</div>
         <div class="swatches">
@@ -746,6 +834,8 @@ function updateWishUI(){
   });
 }
 
+let appliedCoupon = null; // { code, type, value }
+
 function updateCartUI(){
   const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
   const totalQty = keys.reduce((s,k)=> s + cart[k].qty, 0);
@@ -754,11 +844,13 @@ function updateCartUI(){
   const container = document.getElementById('drawerItems');
   const orderForm = document.getElementById('orderForm');
   const payInfo = document.getElementById('payInfo');
+  const couponRow = document.getElementById('couponRow');
 
   if(keys.length === 0){
     container.innerHTML = `<div class="empty-msg">Таны сагс хоосон байна.</div>`;
     orderForm.style.display = "none";
     payInfo.classList.remove('show');
+    couponRow.style.display = "none";
   } else {
     container.innerHTML = keys.map(key=>{
       const item = cart[key];
@@ -783,6 +875,7 @@ function updateCartUI(){
 
     orderForm.style.display = "flex";
     payInfo.classList.add('show');
+    couponRow.style.display = "flex";
 
     container.querySelectorAll('button[data-action]').forEach(btn=>{
       btn.addEventListener('click', ()=>{
@@ -796,14 +889,58 @@ function updateCartUI(){
     });
   }
 
-  const total = keys.reduce((s,k)=>{
+  const subtotal = keys.reduce((s,k)=>{
     const item = cart[k];
     const p = products.find(p => p.id === item.productId);
     return s + item.qty * p.price;
   }, 0);
+
+  let discount = 0;
+  if(appliedCoupon){
+    discount = appliedCoupon.type === 'percent'
+      ? Math.round(subtotal * appliedCoupon.value / 100)
+      : Math.min(appliedCoupon.value, subtotal);
+  }
+  const total = Math.max(0, subtotal - discount);
+
+  const subtotalRow = document.getElementById('subtotalRow');
+  const discountRow = document.getElementById('discountRow');
+  if(discount > 0){
+    subtotalRow.style.display = 'flex';
+    discountRow.style.display = 'flex';
+    document.getElementById('subtotalAmount').textContent = fmt(subtotal);
+    document.getElementById('discountAmount').textContent = '−' + fmt(discount);
+  } else {
+    subtotalRow.style.display = 'none';
+    discountRow.style.display = 'none';
+  }
+
   document.getElementById('totalAmount').textContent = fmt(total);
-  document.getElementById('checkoutBtn').disabled = total === 0;
+  document.getElementById('checkoutBtn').disabled = total === 0 && subtotal === 0;
 }
+
+document.getElementById('couponApplyBtn').addEventListener('click', async ()=>{
+  const code = document.getElementById('couponInput').value.trim();
+  const msg = document.getElementById('couponMsg');
+  if(!code){ return; }
+  try{
+    const res = await fetch('/api/coupons/check?code=' + encodeURIComponent(code));
+    const data = await res.json();
+    if(!data.ok){
+      appliedCoupon = null;
+      msg.textContent = data.error || 'Код олдсонгүй.';
+      msg.className = 'coupon-msg err';
+    } else {
+      appliedCoupon = data.coupon;
+      msg.textContent = `"${data.coupon.code}" код амжилттай ашиглагдлаа ✓`;
+      msg.className = 'coupon-msg ok';
+    }
+  } catch(e){
+    msg.textContent = 'Алдаа гарлаа.';
+    msg.className = 'coupon-msg err';
+  }
+  updateCartUI();
+});
 
 document.getElementById('cartToggle').addEventListener('click', ()=>{
   document.getElementById('wishDrawer').classList.remove('open');
@@ -931,7 +1068,14 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
     const v = p.variants[item.variantIndex];
     return { name: p.name, color: v.color, size: item.size, qty: item.qty, price: p.price };
   });
-  const total = items.reduce((s,i)=> s + i.qty * i.price, 0);
+  const subtotal = items.reduce((s,i)=> s + i.qty * i.price, 0);
+  let discount = 0;
+  if(appliedCoupon){
+    discount = appliedCoupon.type === 'percent'
+      ? Math.round(subtotal * appliedCoupon.value / 100)
+      : Math.min(appliedCoupon.value, subtotal);
+  }
+  const total = Math.max(0, subtotal - discount);
 
   const checkoutBtn = document.getElementById('checkoutBtn');
   checkoutBtn.disabled = true;
@@ -940,13 +1084,16 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
   try{
     const res = await fetch('/api/orders', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, address, items, total })
+      body: JSON.stringify({ name, phone, address, items, total, couponCode: appliedCoupon ? appliedCoupon.code : null, discount })
     });
     const data = await res.json();
     if(!data.ok) throw new Error(data.error || 'Алдаа гарлаа');
 
     alert(`Баярлалаа, ${name}! Таны захиалгыг бүртгэлээ. Бид ${phone} дугаар руу удахгүй холбогдож, төлбөрийг баталгаажуулна.`);
     cart = {};
+    appliedCoupon = null;
+    document.getElementById('couponInput').value = "";
+    document.getElementById('couponMsg').textContent = "";
     document.getElementById('custName').value = "";
     document.getElementById('custPhone').value = "";
     document.getElementById('custAddress').value = "";
@@ -958,6 +1105,28 @@ document.getElementById('checkoutBtn').addEventListener('click', async ()=>{
     checkoutBtn.textContent = "ЗАХИАЛГА ӨГӨХ";
   }
 });
+
+const FAQ_ITEMS = [
+  { q: "Хүргэлт хэр удаан үргэлжлэх вэ?", a: "Улаанбаатар хотод дотор ихэвчлэн 1-2 ажлын өдөрт хүргэгдэнэ. 100,000₮-с дээш захиалгад хүргэлт үнэгүй." },
+  { q: "Барааг хэрхэн буцаах/солих вэ?", a: "Бараа хүлээн авснаас хойш 7 хоногийн дотор ашиглаагүй, шошготой байвал буцаах эсвэл солих боломжтой. Холбоо барих хэсгээс бидэнтэй холбогдоно уу." },
+  { q: "Ямар төлбөрийн хэлбэр байдаг вэ?", a: "Одоогоор банкны шилжүүлгээр төлбөр хүлээн авдаг. Захиалга өгөхөд банкны мэдээлэл өгөгдөнө." },
+  { q: "Размераа яаж сонгох вэ?", a: "Дэлгүүрийн эхэнд байрлах \"Размераа олох\" товч дарж 2 асуултад хариулаад тохирох размерээ мэдэж болно." }
+];
+
+function renderFaq(){
+  const el = document.getElementById('faqList');
+  el.innerHTML = FAQ_ITEMS.map((f,i) => `
+    <div class="faq-item" data-i="${i}">
+      <button class="faq-q"><span>${f.q}</span><span class="plus">+</span></button>
+      <div class="faq-a">${f.a}</div>
+    </div>
+  `).join('');
+  el.querySelectorAll('.faq-q').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btn.closest('.faq-item').classList.toggle('open');
+    });
+  });
+}
 
 async function loadShopData(){
   try{
@@ -987,6 +1156,27 @@ async function loadShopData(){
   renderGrid();
   updateCartUI();
   updateWishUI();
+  renderFaq();
+  handleIncomingAddToCart();
+}
+
+function handleIncomingAddToCart(){
+  const params = new URLSearchParams(window.location.search);
+  const pid = Number(params.get('addToCart'));
+  if(!pid) return;
+  const p = products.find(p => p.id === pid);
+  if(p){
+    const vi = Math.max(0, Number(params.get('variant')) || 0);
+    const size = params.get('size') || p.sizes[0];
+    const key = pid + "-" + vi + "-" + size;
+    if(!cart[key]) cart[key] = { productId: pid, variantIndex: vi, size: size, qty: 0 };
+    cart[key].qty++;
+    updateCartUI();
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+  }
+  // URL-ыг цэвэрлэнэ, дахин refresh хийхэд дахин нэмэгдэхгүй байхаар
+  window.history.replaceState({}, '', window.location.pathname);
 }
 
 loadShopData();

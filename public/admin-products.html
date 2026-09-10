@@ -28,6 +28,10 @@
   .thumb img{ max-width:100%; max-height:100%; object-fit:contain; }
   .product-list{ display:flex; flex-direction:column; gap:12px; }
   .product-row{ display:flex; gap:14px; align-items:center; background:#fff; border:1px solid #E1D5F3; border-radius:12px; padding:12px 16px; }
+  .coupon-list{ display:flex; flex-direction:column; gap:10px; }
+  .coupon-row-item{ display:flex; gap:14px; align-items:center; background:#fff; border:1px solid #E1D5F3; border-radius:12px; padding:10px 16px; }
+  .coupon-row-item .code{ font-weight:800; font-family:monospace; font-size:14px; background:#EFE7FA; padding:4px 10px; border-radius:6px; }
+  .coupon-row-item .val{ flex:1; font-size:13px; color:#7C7189; }
   .product-row img{ width:50px; height:50px; object-fit:contain; background:#F5F1FC; border-radius:8px; }
   .product-row .info{ flex:1; }
   .product-row .info .n{ font-weight:700; font-size:14px; }
@@ -61,6 +65,24 @@
     </div>
     <button id="saveSettingsBtn">Тохиргоог хадгалах</button>
     <span class="msg" id="settingsMsg"></span>
+  </div>
+
+  <div class="card">
+    <h2>Хямдралын код</h2>
+    <div class="coupon-list" id="couponList" style="margin-bottom:16px;"><div class="empty">Ачаалж байна...</div></div>
+    <div class="row3">
+      <div class="field"><label>Код</label><input type="text" id="couponCode" placeholder="BERRY10" style="text-transform:uppercase;"></div>
+      <div class="field">
+        <label>Төрөл</label>
+        <select id="couponType">
+          <option value="percent">Хувь (%)</option>
+          <option value="fixed">Тогтмол дүн (₮)</option>
+        </select>
+      </div>
+      <div class="field"><label>Утга</label><input type="number" id="couponValue" placeholder="10"></div>
+    </div>
+    <button id="addCouponBtn">Код нэмэх</button>
+    <span class="msg" id="couponMsg"></span>
   </div>
 
   <div class="card">
@@ -115,6 +137,12 @@
       <button type="button" class="secondary" id="addVariantBtn">+ Өнгө нэмэх</button>
     </div>
 
+    <div class="field">
+      <label>Нэмэлт зургууд (галерей — дэлгэрэнгүй хуудсан дээр харагдана)</label>
+      <div id="galleryWrap" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;"></div>
+      <input type="file" id="galleryFileInput" accept="image/*" multiple>
+    </div>
+
     <div style="margin-top:16px; display:flex; gap:10px;">
       <button id="saveProductBtn">Бараа хадгалах</button>
       <button type="button" class="secondary" id="cancelEditBtn" style="display:none;">Цуцлах</button>
@@ -167,6 +195,33 @@ document.getElementById('addVariantBtn').addEventListener('click', ()=>{
   document.getElementById('variantsWrap').appendChild(variantRow());
 });
 
+let currentGallery = [];
+
+function renderGalleryWrap(){
+  const wrap = document.getElementById('galleryWrap');
+  wrap.innerHTML = currentGallery.map((img, i) => `
+    <div style="position:relative;">
+      <img src="${img}" style="width:70px; height:70px; object-fit:cover; border-radius:8px; border:1px solid #E1D5F3;">
+      <button type="button" data-gi="${i}" style="position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%; background:#C23B6B; color:#fff; border:none; font-size:12px; line-height:1;">×</button>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('button[data-gi]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentGallery.splice(Number(btn.dataset.gi), 1);
+      renderGalleryWrap();
+    });
+  });
+}
+
+document.getElementById('galleryFileInput').addEventListener('change', (e)=>{
+  Array.from(e.target.files).forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = ()=>{ currentGallery.push(reader.result); renderGalleryWrap(); };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = "";
+});
+
 function resetForm(){
   document.getElementById('editingId').value = "";
   document.getElementById('pName').value = "";
@@ -181,6 +236,8 @@ function resetForm(){
   document.querySelectorAll('.p-tag').forEach(cb => cb.checked = false);
   document.getElementById('variantsWrap').innerHTML = "";
   document.getElementById('variantsWrap').appendChild(variantRow());
+  currentGallery = [];
+  renderGalleryWrap();
   document.getElementById('formTitle').textContent = "Шинэ бараа нэмэх";
   document.getElementById('cancelEditBtn').style.display = "none";
 }
@@ -200,6 +257,8 @@ function fillFormForEdit(p){
   document.querySelectorAll('.p-tag').forEach(cb => cb.checked = tags.includes(cb.value));
   document.getElementById('variantsWrap').innerHTML = "";
   (p.variants || []).forEach(v => document.getElementById('variantsWrap').appendChild(variantRow(v)));
+  currentGallery = (p.gallery || []).slice();
+  renderGalleryWrap();
   document.getElementById('formTitle').textContent = "Бараа засах: " + p.name;
   document.getElementById('cancelEditBtn').style.display = "inline-block";
   window.scrollTo({ top: document.getElementById('formTitle').offsetTop - 20, behavior: 'smooth' });
@@ -280,6 +339,7 @@ document.getElementById('saveProductBtn').addEventListener('click', async ()=>{
     sizes: document.getElementById('pSizes').value.split(',').map(s => s.trim()).filter(Boolean),
     soldOut: document.getElementById('pSoldOut').checked,
     tags: Array.from(document.querySelectorAll('.p-tag:checked')).map(cb => cb.value),
+    gallery: currentGallery,
     variants
   };
 
@@ -334,6 +394,59 @@ async function loadSettings(){
   }
 }
 
+/* ---------- Хямдралын код ---------- */
+async function loadCoupons(){
+  const wrap = document.getElementById('couponList');
+  const res = await fetch('/api/coupons?key=' + encodeURIComponent(ADMIN_KEY));
+  const data = await res.json();
+  if(!data.ok){ wrap.innerHTML = '<div class="empty">Ачаалж чадсангүй.</div>'; return; }
+  if(data.coupons.length === 0){
+    wrap.innerHTML = '<div class="empty">Одоогоор код алга байна.</div>';
+    return;
+  }
+  wrap.innerHTML = data.coupons.map(c => `
+    <div class="coupon-row-item">
+      <span class="code">${c.code}</span>
+      <span class="val">${c.type === 'percent' ? c.value + '%' : Number(c.value).toLocaleString('mn-MN') + '₮'} хямдрал ${c.active ? '' : '(идэвхгүй)'}</span>
+      <button class="danger" data-code="${c.code}">Устгах</button>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('button[data-code]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('Энэ кодыг устгах уу?')) return;
+      await fetch('/api/coupons/' + encodeURIComponent(btn.dataset.code) + '?key=' + encodeURIComponent(ADMIN_KEY), { method:'DELETE' });
+      await loadCoupons();
+    });
+  });
+}
+
+document.getElementById('addCouponBtn').addEventListener('click', async ()=>{
+  const msg = document.getElementById('couponMsg');
+  const code = document.getElementById('couponCode').value.trim().toUpperCase();
+  const type = document.getElementById('couponType').value;
+  const value = Number(document.getElementById('couponValue').value);
+  if(!code || !value){
+    msg.textContent = "Код болон утгаа бөглөнө үү.";
+    msg.className = "msg err";
+    return;
+  }
+  const res = await fetch('/api/coupons?key=' + encodeURIComponent(ADMIN_KEY), {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ code, type, value, active: true })
+  });
+  const data = await res.json();
+  if(data.ok){
+    msg.textContent = "Амжилттай нэмэгдлээ ✓";
+    msg.className = "msg ok";
+    document.getElementById('couponCode').value = "";
+    document.getElementById('couponValue').value = "";
+    await loadCoupons();
+  } else {
+    msg.textContent = "Алдаа: " + (data.error || '');
+    msg.className = "msg err";
+  }
+});
+
 document.getElementById('loadBtn').addEventListener('click', async ()=>{
   ADMIN_KEY = document.getElementById('adminKey').value.trim();
   const keyMsg = document.getElementById('keyMsg');
@@ -351,6 +464,7 @@ document.getElementById('loadBtn').addEventListener('click', async ()=>{
   resetForm();
   await loadProducts();
   await loadSettings();
+  await loadCoupons();
 });
 
 document.getElementById('adminKey').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('loadBtn').click(); });
