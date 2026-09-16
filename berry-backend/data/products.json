@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "NIRVANA Unplugged футболка",
+    "cat": "Футболка",
+    "price": 50000,
+    "oldPrice": null,
+    "badge": "new",
+    "rating": 4.8,
+    "reviews": 132,
+    "sizes": ["S", "M", "L", "XL"],
+    "variants": [
+      { "color": "Цагаан", "hex": "#EDEDE8", "img": "images/tshirt-white.jpg" },
+      { "color": "Хар", "hex": "#1A1A1A", "img": "images/tshirt-black.jpg" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "BERRY зузаан куртик",
+    "cat": "Куртка",
+    "price": 120000,
+    "oldPrice": 150000,
+    "badge": "sale",
+    "rating": 4.6,
+    "reviews": 87,
+    "sizes": ["M", "L", "XL"],
+    "variants": [
+      { "color": "Хар", "hex": "#1A1A1A", "img": "images/jacket-black.jpg" },
+      { "color": "Бежин", "hex": "#D8D3C4", "img": "images/jacket-beige.jpg" }
+    ]
+  }
+]

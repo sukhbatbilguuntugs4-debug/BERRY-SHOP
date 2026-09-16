@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Захиалга хайх — BERRY</title>
+<style>
+  :root{
+    --bg:#FFFFFF; --surface-2:#F4F4F5; --line:#C9A8F0; --line-soft:#E7D9FA;
+    --text:#111111; --text-dim:#6B6B70; --purple:#6D3FD6; --purple-bright:#8B5CF6; --purple-deep:#3E2570;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    padding: 40px 6vw 80px;
+  }
+  .wrap{ max-width:640px; margin:0 auto; }
+  .back-link{ font-size:13px; color:var(--purple); text-decoration:none; font-weight:700; }
+  h1{ font-size:26px; margin: 18px 0 6px; }
+  p.sub{ color:var(--text-dim); font-size:14px; margin:0 0 26px; }
+  .search-row{ display:flex; gap:10px; margin-bottom:30px; }
+  .search-row input{ flex:1; padding:12px 16px; border-radius:100px; border:1px solid var(--line); font-size:15px; font-family:inherit; }
+  .search-row input:focus{ outline:none; border-color:var(--purple); }
+  .search-row button{ background:var(--purple); color:#fff; border:none; padding:12px 24px; border-radius:100px; font-weight:700; font-size:14px; cursor:pointer; }
+  .search-row button:hover{ background:var(--purple-bright); }
+
+  .order-card{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:16px; }
+  .order-card .top-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .order-card .oid{ font-size:13px; color:var(--text-dim); }
+  .status-pill{ font-size:12px; font-weight:800; padding:5px 12px; border-radius:100px; background:var(--surface-2); color:var(--purple-deep); }
+  .order-card .items{ font-size:14px; color:var(--text); margin-bottom:10px; }
+  .order-card .items div{ padding:3px 0; border-bottom:1px solid var(--line-soft); }
+  .order-card .items div:last-child{ border-bottom:none; }
+  .order-card .total-row{ display:flex; justify-content:space-between; font-weight:800; font-size:15px; margin-top:8px; }
+  .order-card .date{ font-size:12px; color:var(--text-dim); margin-top:6px; }
+  .empty-msg{ text-align:center; color:var(--text-dim); font-size:14px; padding:40px 0; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="/">← Дэлгүүр рүү буцах</a>
+  <h1>Захиалгаа хайх</h1>
+  <p class="sub">Захиалга өгөхдөө оруулсан утасны дугаараа бичээрэй.</p>
+
+  <div class="search-row">
+    <input type="tel" id="phoneInput" placeholder="Утасны дугаар">
+    <button id="searchBtn">Хайх</button>
+  </div>
+
+  <div id="resultsWrap"></div>
+</div>
+
+<script>
+const fmt = n => n.toLocaleString('mn-MN') + "₮";
+
+async function search(){
+  const phone = document.getElementById('phoneInput').value.trim();
+  const wrap = document.getElementById('resultsWrap');
+  if(!phone){ wrap.innerHTML = '<div class="empty-msg">Утасны дугаараа оруулна уу.</div>'; return; }
+  wrap.innerHTML = '<div class="empty-msg">Хайж байна...</div>';
+  try{
+    const res = await fetch('/api/orders/track?phone=' + encodeURIComponent(phone));
+    const data = await res.json();
+    if(!data.ok || data.orders.length === 0){
+      wrap.innerHTML = '<div class="empty-msg">Энэ дугаараар захиалга олдсонгүй. Дугаараа шалгаад дахин оролдоно уу.</div>';
+      return;
+    }
+    wrap.innerHTML = data.orders.map(o => `
+      <div class="order-card">
+        <div class="top-row">
+          <span class="oid">Захиалга #${String(o.id).slice(-6)}</span>
+          <span class="status-pill">${o.status}</span>
+        </div>
+        <div class="items">
+          ${o.items.map(i => `<div>${i.name} (${i.color || ''} ${i.size || ''}) × ${i.qty}</div>`).join('')}
+        </div>
+        <div class="total-row"><span>Нийт дүн</span><span>${fmt(o.total)}</span></div>
+        <div class="date">${new Date(o.createdAt).toLocaleString('mn-MN')}</div>
+      </div>
+    `).join('');
+  } catch(e){
+    wrap.innerHTML = '<div class="empty-msg">Алдаа гарлаа. Дахин оролдоно уу.</div>';
+  }
+}
+document.getElementById('searchBtn').addEventListener('click', search);
+document.getElementById('phoneInput').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') search(); });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin-products.html
+
+Sitemap: https://berry-shop.onrender.com/sitemap.xml
