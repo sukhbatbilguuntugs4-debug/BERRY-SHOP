@@ -133,8 +133,8 @@
 
   /* ---------- Category strip ---------- */
   .category-strip{
-    display:flex; gap: 30px; flex-wrap:wrap; justify-content:center;
-    background: var(--surface-2); padding: 26px 6vw; border-bottom:1px solid var(--line-soft);
+    display:flex; gap: 26px; flex-wrap:wrap; justify-content:center;
+    background: var(--surface-2); padding: 18px 6vw; border-bottom:1px solid var(--line-soft);
   }
   .cat-icon-item{ display:flex; flex-direction:column; align-items:center; gap:8px; }
   .cat-icon-box{
@@ -190,7 +190,7 @@
 
   /* ---------- Tag tabs ---------- */
   .tag-tabs{
-    display:flex; max-width:520px; margin: 0 6vw 20px; background: var(--surface-2);
+    display:flex; max-width:520px; margin: 14px 6vw 18px; background: var(--surface-2);
     border-radius: 12px; padding: 5px; gap:4px;
   }
   .tag-tab{
@@ -433,17 +433,9 @@
 
 <section class="category-strip" id="categoryStrip"></section>
 
-<section class="hero">
-  <div class="hero-content">
-    <div class="kicker">2026 ОНЫ ШИНЭ ЦУГЛУУЛГА</div>
-    <h1>Энгийн. Тод. Өдөр тутмын.</h1>
-    <p>BERRY — хотын амьдралд зориулсан цамц, куртикны цуглуулга. Чанартай материал, цэвэр загвар.</p>
-    <div style="display:flex; gap:12px; flex-wrap:wrap;">
-      <button class="hero-cta" onclick="document.getElementById('shopGrid').scrollIntoView({behavior:'smooth'})">ДЭЛГҮҮР ҮЗЭХ</button>
-      <button class="hero-cta-secondary" id="quizOpenBtn">📏 РАЗМЕРАА ОЛОХ</button>
-    </div>
-  </div>
-</section>
+<div style="display:flex; justify-content:flex-end; padding: 16px 6vw 0;">
+  <button class="hero-cta-secondary" id="quizOpenBtn">📏 РАЗМЕРАА ОЛОХ</button>
+</div>
 
 <div class="tag-tabs" id="tagTabs"></div>
 
