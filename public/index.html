@@ -606,6 +606,8 @@ const CATEGORY_ICONS = {
   "Футболка": '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 3 8l3 3 2-1.5V20h8V9.5L18 11l3-3-5-4h-3a2 2 0 0 1-4 0z"/></svg>',
   "Куртка": '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4 3 7l2.5 3L7 9v11h10V9l1.5 1L21 7l-4-3h-2a3 3 0 0 1-6 0z"/></svg>'
 };
+// Ямар нэг ангилалд тусгайлан зохиогдсон icon байхгүй бол энэ ерөнхий хувцасны дүрсийг ашиглана
+const CATEGORY_ICON_FALLBACK = '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 7.5 17 4h-3a2 2 0 0 1-4 0H7L3.6 7.5 6 10l1-1v11h10V9l1 1z"/></svg>';
 
 const TAG_TABS = [
   { key: "featured", label: "Онцлох" },
@@ -661,7 +663,7 @@ function renderCategoryStrip(){
   const cats = categories.filter(c => c !== "Бүгд");
   el.innerHTML = cats.map(c => `
     <div class="cat-icon-item" data-cat="${c}">
-      <div class="cat-icon-box">${CATEGORY_ICONS[c] || ''}</div>
+      <div class="cat-icon-box">${CATEGORY_ICONS[c] || CATEGORY_ICON_FALLBACK}</div>
       <span>${c.toUpperCase()}</span>
     </div>
   `).join('');
